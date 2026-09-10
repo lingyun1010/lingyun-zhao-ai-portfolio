@@ -1,0 +1,32 @@
+{
+  "source": "59200317-9F81-4281-BB29-8B55EAF2681A.MP4",
+  "extraction": {
+    "visualFrameCount": 121,
+    "encodedKeyframeCount": 1,
+    "note": "Frames were selected from extracted visual previews, not inferred from uniform 360 degree spacing."
+  },
+  "center": {
+    "key": "center",
+    "frame": 121,
+    "src": "/angle-frames/center.png",
+    "observedDirection": "front / neutral"
+  },
+  "angleKeys": [
+    { "key": "e", "angle": 0, "frame": 44, "src": "/angle-frames/e.png", "observedDirection": "right" },
+    { "key": "ese", "angle": 22.5, "frame": 48, "src": "/angle-frames/ese.png", "observedDirection": "right, slightly down" },
+    { "key": "se", "angle": 45, "frame": 53, "src": "/angle-frames/se.png", "observedDirection": "down-right" },
+    { "key": "sse", "angle": 67.5, "frame": 57, "src": "/angle-frames/sse.png", "observedDirection": "down-right, near down" },
+    { "key": "s", "angle": 90, "frame": 61, "src": "/angle-frames/s.png", "observedDirection": "down / front" },
+    { "key": "ssw", "angle": 112.5, "frame": 66, "src": "/angle-frames/ssw.png", "observedDirection": "down, slightly left" },
+    { "key": "sw", "angle": 135, "frame": 72, "src": "/angle-frames/sw.png", "observedDirection": "down-left" },
+    { "key": "wsw", "angle": 157.5, "frame": 75, "src": "/angle-frames/wsw.png", "observedDirection": "left, slightly down" },
+    { "key": "w", "angle": 180, "frame": 78, "src": "/angle-frames/w.png", "observedDirection": "left" },
+    { "key": "wnw", "angle": 202.5, "frame": 85, "src": "/angle-frames/wnw.png", "observedDirection": "left, slightly up" },
+    { "key": "nw", "angle": 225, "frame": 93, "src": "/angle-frames/nw.png", "observedDirection": "up-left" },
+    { "key": "nnw", "angle": 247.5, "frame": 100, "src": "/angle-frames/nnw.png", "observedDirection": "up-left, near up" },
+    { "key": "n", "angle": 270, "frame": 106, "src": "/angle-frames/n.png", "observedDirection": "up / front" },
+    { "key": "nne", "angle": 292.5, "frame": 18, "src": "/angle-frames/nne.png", "observedDirection": "up, slightly right" },
+    { "key": "ne", "angle": 315, "frame": 30, "src": "/angle-frames/ne.png", "observedDirection": "up-right" },
+    { "key": "ene", "angle": 337.5, "frame": 38, "src": "/angle-frames/ene.png", "observedDirection": "right, slightly up" }
+  ]
+}
