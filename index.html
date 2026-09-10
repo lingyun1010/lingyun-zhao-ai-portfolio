@@ -42,6 +42,21 @@
         background: #0c0c0c;
       }
 
+      .ghost-cursor {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+
+      .ghost-cursor > canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+      }
+
       a {
         color: inherit;
         text-decoration: none;
@@ -766,6 +781,7 @@
     </style>
   </head>
   <body>
+    <div class="ghost-cursor" id="ghostCursor" aria-hidden="true"></div>
     <main>
       <section class="hero" id="home">
         <nav class="nav" aria-label="Primary navigation">
@@ -1012,7 +1028,352 @@
       </section>
     </main>
 
-    <script>
+    <script type="module">
+      import * as THREE from "three";
+      import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+      import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+      import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+      function initGhostCursor(host) {
+        if (!host) return;
+
+        const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        const trailLength = isTouch ? 18 : 25;
+        const inertia = 0.08;
+        const grainIntensity = 0.08;
+        const bloomStrength = 0.5;
+        const bloomRadius = 1.9;
+        const bloomThreshold = 0.025;
+        const brightness = 1;
+        const edgeIntensity = 0;
+        const maxDevicePixelRatio = 0.55;
+        const targetPixels = isTouch ? 900000 : 1300000;
+        const fadeDelay = isTouch ? 500 : 1000;
+        const fadeDuration = isTouch ? 1000 : 1500;
+
+        const vertexShader = `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = vec4(position, 1.0);
+          }
+        `;
+
+        const fragmentShader = `
+          uniform float iTime;
+          uniform vec3 iResolution;
+          uniform vec2 iMouse;
+          uniform vec2 iPrevMouse[MAX_TRAIL_LENGTH];
+          uniform float iOpacity;
+          uniform float iScale;
+          uniform vec3 iBaseColor;
+          uniform float iBrightness;
+          uniform float iEdgeIntensity;
+          varying vec2 vUv;
+
+          float hash(vec2 p) {
+            return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+          }
+
+          float noise(vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            f *= f * (3.0 - 2.0 * f);
+            return mix(
+              mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), f.x),
+              mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x),
+              f.y
+            );
+          }
+
+          float fbm(vec2 p) {
+            float v = 0.0;
+            float a = 0.5;
+            mat2 m = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+            for (int i = 0; i < 5; i++) {
+              v += a * noise(p);
+              p = m * p * 2.0;
+              a *= 0.5;
+            }
+            return v;
+          }
+
+          vec4 blob(vec2 p, vec2 mousePos, float intensity, float activity) {
+            vec2 q = vec2(
+              fbm(p * iScale + iTime * 0.1),
+              fbm(p * iScale + vec2(5.2, 1.3) + iTime * 0.1)
+            );
+            vec2 r = vec2(
+              fbm(p * iScale + q * 1.5 + iTime * 0.15),
+              fbm(p * iScale + q * 1.5 + vec2(8.3, 2.8) + iTime * 0.15)
+            );
+            float smoke = fbm(p * iScale + r * 0.8);
+            float radius = 0.5 + 0.3 * (1.0 / iScale);
+            float distFactor = 1.0 - smoothstep(0.0, radius * activity, length(p - mousePos));
+            float alpha = pow(smoke, 2.5) * distFactor;
+            vec3 c1 = mix(iBaseColor, vec3(1.0), 0.15);
+            vec3 c2 = mix(iBaseColor, vec3(0.8, 0.9, 1.0), 0.25);
+            vec3 color = mix(c1, c2, sin(iTime * 0.5) * 0.5 + 0.5);
+            return vec4(color * alpha * intensity, alpha * intensity);
+          }
+
+          void main() {
+            vec2 uv = (gl_FragCoord.xy / iResolution.xy * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+            vec2 mouse = (iMouse * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+            vec3 colorAcc = vec3(0.0);
+            float alphaAcc = 0.0;
+
+            vec4 currentBlob = blob(uv, mouse, 1.0, iOpacity);
+            colorAcc += currentBlob.rgb;
+            alphaAcc += currentBlob.a;
+
+            for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
+              vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+              float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
+              t = pow(t, 2.0);
+              if (t > 0.01) {
+                vec4 trailBlob = blob(uv, pm, t * 0.8, iOpacity);
+                colorAcc += trailBlob.rgb;
+                alphaAcc += trailBlob.a;
+              }
+            }
+
+            colorAcc *= iBrightness;
+            vec2 uv01 = gl_FragCoord.xy / iResolution.xy;
+            float edgeDist = min(min(uv01.x, 1.0 - uv01.x), min(uv01.y, 1.0 - uv01.y));
+            float distFromEdge = clamp(edgeDist * 2.0, 0.0, 1.0);
+            float edgeMask = mix(1.0 - clamp(iEdgeIntensity, 0.0, 1.0), 1.0, distFromEdge);
+            float outAlpha = clamp(alphaAcc * iOpacity * edgeMask, 0.0, 1.0);
+            gl_FragColor = vec4(colorAcc, outAlpha);
+          }
+        `;
+
+        const filmGrainShader = {
+          uniforms: {
+            tDiffuse: { value: null },
+            iTime: { value: 0 },
+            intensity: { value: grainIntensity },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `,
+          fragmentShader: `
+            uniform sampler2D tDiffuse;
+            uniform float iTime;
+            uniform float intensity;
+            varying vec2 vUv;
+            float hash1(float n) { return fract(sin(n) * 43758.5453); }
+            void main() {
+              vec4 color = texture2D(tDiffuse, vUv);
+              float n = hash1(vUv.x * 1000.0 + vUv.y * 2000.0 + iTime) * 2.0 - 1.0;
+              color.rgb += n * intensity * color.rgb;
+              gl_FragColor = color;
+            }
+          `,
+        };
+
+        const unpremultiplyPass = new ShaderPass({
+          uniforms: { tDiffuse: { value: null } },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `,
+          fragmentShader: `
+            uniform sampler2D tDiffuse;
+            varying vec2 vUv;
+            void main() {
+              vec4 c = texture2D(tDiffuse, vUv);
+              float coverage = clamp(max(c.r, max(c.g, c.b)), 0.0, 1.0);
+              vec3 straight = coverage > 1e-5 ? c.rgb / coverage : vec3(0.0);
+              gl_FragColor = vec4(clamp(straight, 0.0, 1.0), coverage);
+            }
+          `,
+        });
+
+        const renderer = new THREE.WebGLRenderer({
+          antialias: !isTouch,
+          alpha: true,
+          depth: false,
+          stencil: false,
+          powerPreference: isTouch ? "low-power" : "high-performance",
+          premultipliedAlpha: false,
+          preserveDrawingBuffer: false,
+        });
+        renderer.setClearColor(0x000000, 0);
+        renderer.domElement.style.pointerEvents = "none";
+        host.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        const trailBuffer = Array.from({ length: trailLength }, () => new THREE.Vector2(0.5, 0.5));
+        const currentMouse = new THREE.Vector2(0.5, 0.5);
+        const velocity = new THREE.Vector2(0, 0);
+        let head = 0;
+        let pointerActive = false;
+        let fadeOpacity = 0;
+        let lastMoveTime = performance.now();
+        let running = false;
+        let raf = null;
+        let hasValidSize = false;
+
+        const baseColor = new THREE.Color("#b497cf");
+        const material = new THREE.ShaderMaterial({
+          defines: { MAX_TRAIL_LENGTH: trailLength },
+          uniforms: {
+            iTime: { value: 0 },
+            iResolution: { value: new THREE.Vector3(1, 1, 1) },
+            iMouse: { value: new THREE.Vector2(0.5, 0.5) },
+            iPrevMouse: { value: trailBuffer.map((v) => v.clone()) },
+            iOpacity: { value: 0 },
+            iScale: { value: 1 },
+            iBaseColor: { value: new THREE.Vector3(baseColor.r, baseColor.g, baseColor.b) },
+            iBrightness: { value: brightness },
+            iEdgeIntensity: { value: edgeIntensity },
+          },
+          vertexShader,
+          fragmentShader,
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
+        });
+
+        scene.add(new THREE.Mesh(geometry, material));
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), bloomStrength, bloomRadius, bloomThreshold);
+        composer.addPass(bloomPass);
+        const filmPass = new ShaderPass(filmGrainShader);
+        composer.addPass(filmPass);
+        composer.addPass(unpremultiplyPass);
+
+        function calculateScale() {
+          const base = 600;
+          const current = Math.min(Math.max(1, window.innerWidth), Math.max(1, window.innerHeight));
+          return Math.max(0.5, Math.min(2, current / base));
+        }
+
+        function resizeGhostCursor() {
+          const width = Math.floor(window.innerWidth);
+          const height = Math.floor(window.innerHeight);
+          if (width <= 0 || height <= 0) {
+            hasValidSize = false;
+            return;
+          }
+
+          const currentDpr = Math.min(window.devicePixelRatio || 1, maxDevicePixelRatio);
+          const need = width * height * currentDpr * currentDpr;
+          const scale = need <= targetPixels ? 1 : Math.max(0.5, Math.min(1, Math.sqrt(targetPixels / Math.max(1, need))));
+          const pixelRatio = currentDpr * scale;
+
+          renderer.setPixelRatio(pixelRatio);
+          renderer.setSize(width, height, false);
+          composer.setPixelRatio?.(pixelRatio);
+          composer.setSize(width, height);
+          const pixelWidth = Math.max(1, Math.floor(width * pixelRatio));
+          const pixelHeight = Math.max(1, Math.floor(height * pixelRatio));
+          material.uniforms.iResolution.value.set(pixelWidth, pixelHeight, 1);
+          material.uniforms.iScale.value = calculateScale();
+          bloomPass.setSize(pixelWidth, pixelHeight);
+          hasValidSize = true;
+        }
+
+        function animateGhostCursor() {
+          if (!hasValidSize) {
+            raf = requestAnimationFrame(animateGhostCursor);
+            return;
+          }
+
+          const now = performance.now();
+          const elapsed = now / 1000;
+
+          if (pointerActive) {
+            velocity.set(
+              currentMouse.x - material.uniforms.iMouse.value.x,
+              currentMouse.y - material.uniforms.iMouse.value.y
+            );
+            material.uniforms.iMouse.value.copy(currentMouse);
+            fadeOpacity = 1;
+          } else {
+            velocity.multiplyScalar(inertia);
+            if (velocity.lengthSq() > 1e-6) {
+              material.uniforms.iMouse.value.add(velocity);
+            }
+            const idleTime = now - lastMoveTime;
+            if (idleTime > fadeDelay) {
+              const k = Math.min(1, (idleTime - fadeDelay) / fadeDuration);
+              fadeOpacity = Math.max(0, 1 - k);
+            }
+          }
+
+          head = (head + 1) % trailBuffer.length;
+          trailBuffer[head].copy(material.uniforms.iMouse.value);
+          const trailUniform = material.uniforms.iPrevMouse.value;
+          for (let i = 0; i < trailBuffer.length; i += 1) {
+            const sourceIndex = (head - i + trailBuffer.length) % trailBuffer.length;
+            trailUniform[i].copy(trailBuffer[sourceIndex]);
+          }
+
+          material.uniforms.iOpacity.value = fadeOpacity;
+          material.uniforms.iTime.value = elapsed;
+          filmPass.uniforms.iTime.value = elapsed;
+          composer.render();
+
+          if (!pointerActive && fadeOpacity <= 0.001) {
+            running = false;
+            raf = null;
+            return;
+          }
+
+          raf = requestAnimationFrame(animateGhostCursor);
+        }
+
+        function ensureGhostLoop() {
+          if (!running) {
+            running = true;
+            raf = requestAnimationFrame(animateGhostCursor);
+          }
+        }
+
+        window.addEventListener(
+          "pointermove",
+          (event) => {
+            currentMouse.set(
+              THREE.MathUtils.clamp(event.clientX / Math.max(1, window.innerWidth), 0, 1),
+              THREE.MathUtils.clamp(1 - event.clientY / Math.max(1, window.innerHeight), 0, 1)
+            );
+            pointerActive = true;
+            lastMoveTime = performance.now();
+            ensureGhostLoop();
+          },
+          { passive: true }
+        );
+
+        window.addEventListener(
+          "pointerleave",
+          () => {
+            pointerActive = false;
+            lastMoveTime = performance.now();
+            ensureGhostLoop();
+          },
+          { passive: true }
+        );
+
+        window.addEventListener("resize", resizeGhostCursor, { passive: true });
+        resizeGhostCursor();
+      }
+
+      initGhostCursor(document.querySelector("#ghostCursor"));
+
       /*
         ANGLE_KEYS was built from actual extracted frames in:
         public/all-frames-contact-sheet.jpg and public/angle-keys-preview.jpg.
