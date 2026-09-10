@@ -1,100 +1,154 @@
-# Lingyun Zhao - AI Portfolio
+# Lingyun Zhao AI Portfolio
 
-A professional portfolio website showcasing AI projects, skills, and experience.
+A personal portfolio site for an AI engineer and computer vision researcher. The site presents production engineering experience, applied GenAI work, RAG systems, data platforms, and visual computing research through a highly interactive single-page design.
 
-## About
+Live site: [https://lingyun1010.github.io/lingyun-zhao-ai-portfolio/](https://lingyun1010.github.io/lingyun-zhao-ai-portfolio/)
 
-Welcome to my AI portfolio! This website is a comprehensive showcase of my work in artificial intelligence, machine learning, and related technologies. Explore my projects, learn about my expertise, and discover how I can contribute to your team.
+## Project Overview
 
-## Features
+This portfolio is built as a Vite-powered static site. The main experience lives in `index.html`, with public assets in `public/` and GitHub Pages deployment handled through GitHub Actions.
 
-- **Project Showcase** - Detailed case studies and demonstrations of AI/ML projects
-- **Responsive Design** - Fully responsive layout that works on desktop, tablet, and mobile devices
-- **Clean Interface** - Intuitive navigation for easy browsing of content
-- **Technologies Highlight** - Overview of skills and technologies used
-- **Contact Information** - Easy ways to connect and reach out
+The page includes:
 
-## Installation
+- A full-screen hero with a video-derived cartoon character portrait.
+- Mouse-direction-based character angle switching.
+- A GhostCursor-style WebGL pointer trail.
+- Edge-reactive glowing cards for skill and project sections.
+- Responsive portfolio sections for highlights, skills, services, projects, experience, education, and contact.
 
-To set up this portfolio website locally:
+## Design Direction
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/lingyun1010/lingyun-zhao-ai-portfolio.git
-   cd lingyun-zhao-ai-portfolio
-   ```
+The visual language combines a dark cinematic portfolio surface with high-contrast typography and soft neon interaction details.
 
-2. **No dependencies required**
-   This is a static website built with HTML, CSS, and JavaScript.
+Key design choices:
 
-3. **Open in browser**
-   - Simply open `index.html` in your web browser, or
-   - Serve using a local server (recommended for best results):
-     ```bash
-     # Using Python 3
-     python -m http.server 8000
-     
-     # Using Python 2
-     python -m SimpleHTTPServer 8000
-     
-     # Using Node.js (if http-server is installed)
-     http-server
-     ```
+- **Large typographic hero**: the oversized headline creates an immediate first-viewport identity moment.
+- **Character-led focal point**: the hero portrait is centered and layered beneath the headline, giving the page a playful but polished personal signal.
+- **Dark editorial canvas**: black and charcoal sections make the character, gradient lighting, and card interactions stand out.
+- **Alternating content rhythm**: dark portfolio sections are balanced with light service and experience sections for readability.
+- **Compact technical content**: skills and project details use chips, cards, and short copy so the page remains scannable.
 
-## Usage
+## Hero Interaction
 
-Once the website is running:
+The hero character is generated from an animation source and exported into transparent PNG frames.
 
-1. **Navigate** through the different sections to explore projects and experience
-2. **View Projects** - Click on projects to see detailed information, images, and links
-3. **Contact** - Use the contact section to reach out via email or social media
+The site uses an explicit `ANGLE_KEYS` configuration to map mouse direction to selected frames. This mapping was created from inspected extracted frames rather than assuming the animation is evenly distributed around 360 degrees.
 
-## Technology Stack
+Current behavior:
 
-- **Frontend**
-  - HTML5
-  - CSS3
-  - JavaScript (ES6+)
-  
-- **Hosting**
-  - GitHub Pages
+- The center frame is used when the pointer is near the middle of the viewport.
+- Sixteen directional frames are used for surrounding pointer directions.
+- Frame changes are instant and avoid brightness or opacity shifts, so the portrait does not flicker during angle changes.
+- All frame paths are relative, so the animation works under the GitHub Pages project path.
 
-- **Tools & Frameworks**
-  - Responsive design principles
-  - Modern web standards
+Relevant assets:
 
-## How to Contribute
+- `public/angle-frames/`
+- `public/angle-keys.json`
+- `public/angle-keys-preview.jpg`
+- `public/all-frames-contact-sheet.jpg`
 
-Contributions are welcome! If you find any issues or have suggestions for improvements:
+## Ghost Cursor
 
-1. **Fork** the repository
-2. **Create** a new branch for your feature
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. **Make** your changes and commit them
-   ```bash
-   git commit -m "Add: description of your changes"
-   ```
-4. **Push** to your fork
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. **Open** a Pull Request describing your changes
+The mouse effect is inspired by the React Bits GhostCursor component and implemented directly in the static page with Three.js.
 
-## License
+It adds:
 
-This project is open source and available under the MIT License. See the LICENSE file for more details.
+- A soft smoke-like cursor trail.
+- Bloom glow around the trail.
+- Subtle film-grain texture.
+- Inertia, so the trail feels fluid rather than rigid.
+- Idle fade-out after the pointer stops or leaves the window.
 
-## Contact Information
+The canvas is fixed across the viewport and uses `pointer-events: none`, so it does not block navigation, card hover states, or links.
 
-- **Email** - [Your Email Here]
-- **LinkedIn** - [Your LinkedIn Profile]
-- **GitHub** - [@lingyun1010](https://github.com/lingyun1010)
-- **Website** - [lingyun-zhao-ai-portfolio](https://lingyun1010.github.io/lingyun-zhao-ai-portfolio/)
+## Card Glow
 
-Feel free to reach out for collaborations, job opportunities, or just to say hello!
+The skills and project cards use a React Bits-inspired edge glow treatment adapted for plain HTML, CSS, and JavaScript.
 
----
+The effect reacts to pointer proximity:
 
-**Last Updated:** September 2026
+- Moving close to a card edge reveals a directional glow.
+- The glow angle follows the cursor position around the card.
+- A subtle mesh-gradient fill appears near the active edge.
+- The effect fades out after hover, preserving the calm baseline layout.
+
+Applied sections:
+
+- Four skill cards in the About section.
+- Three project cards in the Projects section.
+
+## Content Structure
+
+The page is organized as a single scrollable portfolio:
+
+- **Hero**: identity, technical positioning, animated portrait, and primary contact action.
+- **Highlights**: quick overview of applied GenAI, production systems, and vision/3D work.
+- **About**: concise profile summary and technical skill groups.
+- **Services**: applied GenAI, full-stack delivery, knowledge systems, and computer vision.
+- **Projects**: selected AI, RAG, and scientific data platform work.
+- **Experience**: production software engineering background.
+- **Education and contact panel**: academic background and site-level contact area.
+
+This README intentionally avoids publishing personal contact details. The live site may contain user-facing contact UI, but repository documentation should not expose private contact information.
+
+## Tech Stack
+
+- Vite
+- TypeScript-ready project setup
+- React dependencies retained from the original setup
+- Three.js for the GhostCursor WebGL effect
+- HTML, CSS, and JavaScript for the current static page implementation
+- GitHub Actions
+- GitHub Pages
+
+## Local Development
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Start the local site:
+
+```bash
+pnpm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000/
+```
+
+Build for production:
+
+```bash
+pnpm run build
+```
+
+Preview the production build:
+
+```bash
+pnpm run preview
+```
+
+## GitHub Pages Deployment
+
+Deployment is configured in `.github/workflows/pages.yml`.
+
+On every push to `main`, GitHub Actions will:
+
+1. Install dependencies with pnpm.
+2. Build the Vite site.
+3. Upload the `dist/` output as a Pages artifact.
+4. Publish the latest portfolio to GitHub Pages.
+
+`vite.config.ts` sets:
+
+```ts
+base: "./"
+```
+
+This is important because GitHub Pages serves the site from a repository subpath. Relative asset paths ensure the JavaScript bundle, character frames, and public assets load correctly on the live page.
