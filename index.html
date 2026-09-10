@@ -337,11 +337,159 @@
 
       .skill-card,
       .project-card {
+        --edge-proximity: 0;
+        --cursor-angle: 45deg;
+        --edge-sensitivity: 30;
+        --color-sensitivity: 48;
+        --card-bg: #16181b;
+        --glow-padding: 40px;
+        --cone-spread: 25;
+        --fill-opacity: 0.42;
+        --glow-color: hsl(292deg 92% 74% / 100%);
+        --glow-color-60: hsl(292deg 92% 74% / 60%);
+        --glow-color-50: hsl(292deg 92% 74% / 50%);
+        --glow-color-40: hsl(292deg 92% 74% / 40%);
+        --glow-color-30: hsl(292deg 92% 74% / 30%);
+        --glow-color-20: hsl(292deg 92% 74% / 20%);
+        --glow-color-10: hsl(292deg 92% 74% / 10%);
+        --gradient-one: radial-gradient(at 80% 55%, #c084fc 0px, transparent 50%);
+        --gradient-two: radial-gradient(at 69% 34%, #f472b6 0px, transparent 50%);
+        --gradient-three: radial-gradient(at 8% 6%, #38bdf8 0px, transparent 50%);
+        --gradient-four: radial-gradient(at 41% 38%, #c084fc 0px, transparent 50%);
+        --gradient-five: radial-gradient(at 86% 85%, #f472b6 0px, transparent 50%);
+        --gradient-six: radial-gradient(at 82% 18%, #38bdf8 0px, transparent 50%);
+        --gradient-seven: radial-gradient(at 51% 4%, #f472b6 0px, transparent 50%);
+        --gradient-base: linear-gradient(#c084fc 0 100%);
+        position: relative;
+        isolation: isolate;
+        overflow: visible;
         border: 1px solid rgba(215, 226, 234, 0.16);
         border-radius: 28px;
+        background: var(--card-bg);
+        box-shadow:
+          rgba(0, 0, 0, 0.12) 0 2px 4px,
+          rgba(0, 0, 0, 0.14) 0 12px 30px;
+        transform: translate3d(0, 0, 0.01px);
+      }
+
+      .skill-card > *,
+      .project-card > * {
+        position: relative;
+        z-index: 2;
+      }
+
+      .skill-card::before,
+      .skill-card::after,
+      .project-card::before,
+      .project-card::after,
+      .skill-card .edge-light,
+      .project-card .edge-light {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        transition: opacity 0.25s ease-out;
+      }
+
+      .skill-card:not(:hover)::before,
+      .skill-card:not(:hover)::after,
+      .skill-card:not(:hover) .edge-light,
+      .project-card:not(:hover)::before,
+      .project-card:not(:hover)::after,
+      .project-card:not(:hover) .edge-light {
+        opacity: 0;
+        transition: opacity 0.75s ease-in-out;
+      }
+
+      .skill-card::before,
+      .project-card::before {
+        z-index: 0;
+        border: 1px solid transparent;
         background:
-          linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025)),
-          rgba(255, 255, 255, 0.035);
+          linear-gradient(var(--card-bg) 0 100%) padding-box,
+          linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
+          var(--gradient-one) border-box,
+          var(--gradient-two) border-box,
+          var(--gradient-three) border-box,
+          var(--gradient-four) border-box,
+          var(--gradient-five) border-box,
+          var(--gradient-six) border-box,
+          var(--gradient-seven) border-box,
+          var(--gradient-base) border-box;
+        opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+        mask-image:
+          conic-gradient(
+            from var(--cursor-angle) at center,
+            black calc(var(--cone-spread) * 1%),
+            transparent calc((var(--cone-spread) + 15) * 1%),
+            transparent calc((100 - var(--cone-spread) - 15) * 1%),
+            black calc((100 - var(--cone-spread)) * 1%)
+          );
+      }
+
+      .skill-card::after,
+      .project-card::after {
+        z-index: 0;
+        border: 1px solid transparent;
+        background:
+          var(--gradient-one) padding-box,
+          var(--gradient-two) padding-box,
+          var(--gradient-three) padding-box,
+          var(--gradient-four) padding-box,
+          var(--gradient-five) padding-box,
+          var(--gradient-six) padding-box,
+          var(--gradient-seven) padding-box,
+          var(--gradient-base) padding-box;
+        opacity: calc(var(--fill-opacity) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+        mix-blend-mode: soft-light;
+        mask-image:
+          linear-gradient(to bottom, black, black),
+          radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+          radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+          radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+          radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+          radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+          conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+        mask-composite: subtract, add, add, add, add, add;
+      }
+
+      .skill-card .edge-light,
+      .project-card .edge-light {
+        inset: calc(var(--glow-padding) * -1);
+        z-index: 1;
+        opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+        mix-blend-mode: plus-lighter;
+        mask-image:
+          conic-gradient(
+            from var(--cursor-angle) at center,
+            black 2.5%,
+            transparent 10%,
+            transparent 90%,
+            black 97.5%
+          );
+      }
+
+      .skill-card .edge-light::before,
+      .project-card .edge-light::before {
+        content: "";
+        position: absolute;
+        inset: var(--glow-padding);
+        border-radius: inherit;
+        box-shadow:
+          inset 0 0 0 1px var(--glow-color),
+          inset 0 0 1px 0 var(--glow-color-60),
+          inset 0 0 3px 0 var(--glow-color-50),
+          inset 0 0 6px 0 var(--glow-color-40),
+          inset 0 0 15px 0 var(--glow-color-30),
+          inset 0 0 25px 2px var(--glow-color-20),
+          inset 0 0 50px 2px var(--glow-color-10),
+          0 0 1px 0 var(--glow-color-60),
+          0 0 3px 0 var(--glow-color-50),
+          0 0 6px 0 var(--glow-color-40),
+          0 0 15px 0 var(--glow-color-30),
+          0 0 25px 2px var(--glow-color-20),
+          0 0 50px 2px var(--glow-color-10);
       }
 
       .skill-card {
@@ -429,6 +577,10 @@
       .project-card {
         min-height: 390px;
         padding: 26px;
+        --edge-sensitivity: 28;
+        --color-sensitivity: 45;
+        --glow-padding: 48px;
+        --fill-opacity: 0.38;
       }
 
       .project-number {
@@ -695,6 +847,7 @@
 
         <div class="skills-grid">
           <article class="skill-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <strong>AI Systems</strong>
             <span>Generative AI</span>
             <span>LLM applications</span>
@@ -704,6 +857,7 @@
             <span>Tool calling</span>
           </article>
           <article class="skill-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <strong>Product Engineering</strong>
             <span>React</span>
             <span>TypeScript</span>
@@ -713,6 +867,7 @@
             <span>REST APIs</span>
           </article>
           <article class="skill-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <strong>Data Platforms</strong>
             <span>PostgreSQL</span>
             <span>SQL</span>
@@ -721,6 +876,7 @@
             <span>Information retrieval</span>
           </article>
           <article class="skill-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <strong>Vision & 3D</strong>
             <span>Computer vision</span>
             <span>Image processing</span>
@@ -777,6 +933,7 @@
 
         <div class="project-grid">
           <article class="project-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <span class="project-number">01</span>
             <p class="project-type">AI content intelligence</p>
             <h3>TikTok Content Agent</h3>
@@ -789,6 +946,7 @@
             </div>
           </article>
           <article class="project-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <span class="project-number">02</span>
             <p class="project-type">Retrieval augmented generation</p>
             <h3>E-commerce RAG Support Agent</h3>
@@ -801,6 +959,7 @@
             </div>
           </article>
           <article class="project-card">
+            <span class="edge-light" aria-hidden="true"></span>
             <span class="project-number">03</span>
             <p class="project-type">Scientific data platform</p>
             <h3>Expression Atlas</h3>
@@ -931,6 +1090,51 @@
       );
 
       window.addEventListener("pointerleave", () => setFrame(CENTER_KEY));
+
+      const glowCards = document.querySelectorAll(".skill-card, .project-card");
+
+      function getEdgeProximity(card, x, y) {
+        const width = card.clientWidth;
+        const height = card.clientHeight;
+        const cx = width / 2;
+        const cy = height / 2;
+        const dx = x - cx;
+        const dy = y - cy;
+        const kx = dx === 0 ? Infinity : cx / Math.abs(dx);
+        const ky = dy === 0 ? Infinity : cy / Math.abs(dy);
+        return Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
+      }
+
+      function getCursorAngle(card, x, y) {
+        const cx = card.clientWidth / 2;
+        const cy = card.clientHeight / 2;
+        const dx = x - cx;
+        const dy = y - cy;
+        if (dx === 0 && dy === 0) return 0;
+        const degrees = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        return degrees < 0 ? degrees + 360 : degrees;
+      }
+
+      glowCards.forEach((card) => {
+        card.addEventListener(
+          "pointermove",
+          (event) => {
+            const rect = card.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const edge = getEdgeProximity(card, x, y);
+            const angle = getCursorAngle(card, x, y);
+
+            card.style.setProperty("--edge-proximity", `${(edge * 100).toFixed(3)}`);
+            card.style.setProperty("--cursor-angle", `${angle.toFixed(3)}deg`);
+          },
+          { passive: true }
+        );
+
+        card.addEventListener("pointerleave", () => {
+          card.style.setProperty("--edge-proximity", "0");
+        });
+      });
     </script>
   </body>
 </html>
