@@ -183,6 +183,160 @@
         filter: drop-shadow(0 32px 44px rgba(0, 0, 0, 0.62));
       }
 
+      .character-stage[data-state="thinking"] .character-glow {
+        animation: avatar-thinking 1.25s ease-in-out infinite alternate;
+      }
+
+      @keyframes avatar-thinking {
+        to {
+          opacity: 0.68;
+          filter: blur(48px);
+        }
+      }
+
+      .avatar-chat {
+        position: absolute;
+        top: 30%;
+        right: clamp(24px, 4vw, 52px);
+        z-index: 6;
+        width: min(370px, 31vw);
+        color: #d7e2ea;
+      }
+
+      .avatar-speech {
+        position: relative;
+        min-height: 72px;
+        max-height: 210px;
+        padding: 18px 20px;
+        overflow-y: auto;
+        border: 1px solid rgba(215, 226, 234, 0.25);
+        border-radius: 24px 24px 8px 24px;
+        background: rgba(12, 12, 12, 0.84);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+        backdrop-filter: blur(18px);
+      }
+
+      .avatar-speech p {
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 300;
+        line-height: 1.5;
+      }
+
+      .avatar-speech[data-state="answered"] {
+        animation: answer-reveal 240ms ease-out;
+      }
+
+      @keyframes answer-reveal {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .source-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 13px;
+      }
+
+      .source-chip,
+      .question-chip {
+        border: 1px solid rgba(215, 226, 234, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.06);
+        font: inherit;
+        cursor: default;
+      }
+
+      button.source-chip {
+        cursor: pointer;
+      }
+
+      .source-chip {
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        line-height: 1.2;
+      }
+
+      .avatar-chat-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 6px;
+        border: 1px solid rgba(215, 226, 234, 0.2);
+        border-radius: 999px;
+        background: rgba(12, 12, 12, 0.8);
+        backdrop-filter: blur(16px);
+      }
+
+      .avatar-chat-form input {
+        width: 100%;
+        min-width: 0;
+        padding: 8px 8px 8px 12px;
+        border: 0;
+        outline: 0;
+        color: #ffffff;
+        background: transparent;
+        font: inherit;
+        font-size: 0.92rem;
+      }
+
+      .avatar-chat-form input::placeholder {
+        color: rgba(215, 226, 234, 0.55);
+      }
+
+      .avatar-chat-form button {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 50%;
+        color: #ffffff;
+        background: linear-gradient(123deg, #b600a8, #7621b0 65%, #be4c00);
+        font: inherit;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .avatar-chat-form button:disabled,
+      .avatar-chat-form input:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      .suggested-questions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 9px;
+      }
+
+      .question-chip {
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        line-height: 1.25;
+        cursor: pointer;
+      }
+
+      .question-chip:hover,
+      .question-chip:focus-visible,
+      button.source-chip:hover,
+      button.source-chip:focus-visible {
+        border-color: rgba(255, 255, 255, 0.58);
+        color: #ffffff;
+      }
+
+      .profile-highlight {
+        animation: profile-highlight 1.8s ease-out;
+      }
+
+      @keyframes profile-highlight {
+        0%, 35% { box-shadow: 0 0 0 3px rgba(255, 79, 190, 0.9), 0 0 42px rgba(0, 178, 255, 0.52); }
+        100% { box-shadow: none; }
+      }
+
       .hero-bottom {
         position: relative;
         z-index: 4;
@@ -748,6 +902,19 @@
           flex-direction: column;
         }
 
+        .avatar-chat {
+          top: auto;
+          right: auto;
+          bottom: 150px;
+          left: 50%;
+          width: min(520px, calc(100% - 32px));
+          translate: -50% 0;
+        }
+
+        .avatar-speech {
+          max-height: 160px;
+        }
+
         .content-band,
         .skills-grid,
         .project-grid,
@@ -777,6 +944,27 @@
         .contact-button {
           width: 100%;
         }
+
+        .hero {
+          min-height: 920px;
+        }
+
+        .avatar-chat {
+          bottom: 160px;
+        }
+
+        .avatar-speech {
+          min-height: 64px;
+          padding: 15px 16px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .character-stage[data-state="thinking"] .character-glow,
+        .avatar-speech[data-state="answered"],
+        .profile-highlight {
+          animation: none;
+        }
       }
     </style>
   </head>
@@ -805,6 +993,18 @@
             src="angle-frames/center.png"
             alt=""
           />
+        </div>
+
+        <div class="avatar-chat" aria-label="Ask Lingyun's portfolio avatar">
+          <div class="avatar-speech" id="avatarSpeech" data-state="idle" role="status" aria-live="polite">
+            <p id="avatarAnswer">Ask me about my work.</p>
+            <div class="source-list" id="avatarSources" aria-label="Answer sources"></div>
+          </div>
+          <form class="avatar-chat-form" id="avatarChatForm">
+            <input id="avatarQuestion" name="message" type="text" maxlength="500" autocomplete="off" placeholder="Ask me anything..." aria-label="Ask Lingyun a question" />
+            <button type="submit" id="avatarSubmit" aria-label="Send question">→</button>
+          </form>
+          <div class="suggested-questions" id="suggestedQuestions" aria-label="Suggested questions"></div>
         </div>
 
         <div class="hero-bottom">
@@ -903,7 +1103,7 @@
       };
 
       renderList("work", profile.highlights, (item) => `
-        <article${item.id === "production-systems" ? ' id="systems"' : ""}>
+        <article${item.id === "production-systems" ? ' id="systems"' : ""} data-profile-id="${item.id}">
           <h2>${item.title}</h2><p>${item.description}</p>
         </article>`);
       renderList("profileMarquee", [...profile.focusAreas, ...profile.focusAreas], (item) => `<span>${item}</span>`);
@@ -928,6 +1128,7 @@
 
       const experience = profile.experience[0];
       setText("profileExperienceSummary", experience.summary);
+      document.querySelector("#profileExperience").dataset.profileId = experience.id;
       document.querySelector("#profileExperience").innerHTML = `
         <p class="period">${experience.startDate} - ${experience.endDate} | ${experience.location}</p>
         <h3>${experience.role}</h3><p>${experience.company}</p>
@@ -936,8 +1137,113 @@
       const educationLine = (item) => [item.institution, item.description, item.honours, `${item.startDate} - ${item.endDate}`]
         .filter(Boolean).join(" | ");
       document.querySelector("#profileEducation").innerHTML = profile.education.map((item, index) =>
-        `${index === 0 ? `<h2>${item.degree}</h2>` : ""}<p>${index === 0 ? educationLine(item) : `${item.degree} | ${educationLine(item)}`}</p>`
+        `<div data-profile-id="${item.id}">${index === 0 ? `<h2>${item.degree}</h2>` : ""}<p>${index === 0 ? educationLine(item) : `${item.degree} | ${educationLine(item)}`}</p></div>`
       ).join("");
+
+      const suggestedQuestions = [
+        "What AI projects have you built?",
+        "What experience do you have with RAG?",
+        "Tell me about your computer vision background.",
+      ];
+
+      const chatForm = document.querySelector("#avatarChatForm");
+      const chatInput = document.querySelector("#avatarQuestion");
+      const chatSubmit = document.querySelector("#avatarSubmit");
+      const speechBubble = document.querySelector("#avatarSpeech");
+      const answerText = document.querySelector("#avatarAnswer");
+      const sourceList = document.querySelector("#avatarSources");
+      const characterStage = document.querySelector(".character-stage");
+      /** @typedef {"idle" | "thinking" | "answered" | "error"} AvatarChatState */
+      /** @type {AvatarChatState} */
+      let avatarChatState = "idle";
+      let currentRelatedIds = [];
+
+      renderList("suggestedQuestions", suggestedQuestions, (question) =>
+        `<button class="question-chip" type="button" data-question="${question}">${question}</button>`
+      );
+
+      function setAvatarChatState(state, message) {
+        avatarChatState = state;
+        speechBubble.dataset.state = state;
+        speechBubble.setAttribute("aria-busy", state === "thinking" ? "true" : "false");
+        characterStage.dataset.state = state;
+        answerText.textContent = message;
+        chatInput.disabled = state === "thinking";
+        chatSubmit.disabled = state === "thinking";
+        chatSubmit.setAttribute("aria-label", state === "thinking" ? "Answering question" : "Send question");
+      }
+
+      function profileIdForSource(source) {
+        const prefix = `${source.type}-`;
+        return source.id.startsWith(prefix) ? source.id.slice(prefix.length) : null;
+      }
+
+      function navigateToProfileId(profileId) {
+        const target = profileId ? document.querySelector(`[data-profile-id="${CSS.escape(profileId)}"]`) : null;
+        if (!target) return;
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.remove("profile-highlight");
+        requestAnimationFrame(() => target.classList.add("profile-highlight"));
+        window.setTimeout(() => target.classList.remove("profile-highlight"), 1900);
+      }
+
+      function renderSources(sources) {
+        sourceList.replaceChildren();
+        sources.slice(0, 3).forEach((source) => {
+          const profileId = profileIdForSource(source);
+          const hasTarget = profileId && currentRelatedIds.includes(profileId)
+            && document.querySelector(`[data-profile-id="${CSS.escape(profileId)}"]`);
+          const chip = document.createElement(hasTarget ? "button" : "span");
+          chip.className = "source-chip";
+          chip.textContent = source.title;
+          if (hasTarget) {
+            chip.type = "button";
+            chip.addEventListener("click", () => navigateToProfileId(profileId));
+          }
+          sourceList.append(chip);
+        });
+      }
+
+      async function askAvatar(question) {
+        const message = question.trim();
+        if (!message || avatarChatState === "thinking") return;
+        chatInput.value = message;
+        currentRelatedIds = [];
+        sourceList.replaceChildren();
+        setAvatarChatState("thinking", "…");
+
+        try {
+          const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+          const response = await fetch(`${apiBaseUrl}/api/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+          });
+          if (!response.ok) throw new Error("Chat request failed");
+          const result = await response.json();
+          if (!result || typeof result.answer !== "string" || !Array.isArray(result.sources)) {
+            throw new Error("Unexpected chat response");
+          }
+          currentRelatedIds = Array.isArray(result.relatedIds)
+            ? result.relatedIds.filter((id) => typeof id === "string")
+            : [];
+          setAvatarChatState("answered", result.answer);
+          renderSources(result.sources);
+        } catch {
+          sourceList.replaceChildren();
+          setAvatarChatState("error", "I couldn't answer that just now. Please try again.");
+        }
+      }
+
+      chatForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        askAvatar(chatInput.value);
+      });
+
+      document.querySelector("#suggestedQuestions").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-question]");
+        if (button) askAvatar(button.dataset.question);
+      });
 
       function initGhostCursor(host) {
         if (!host) return;

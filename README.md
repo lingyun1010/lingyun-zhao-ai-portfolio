@@ -176,6 +176,12 @@ POST /api/chat
 
 It returns an `answer`, traceable `sources`, stable `relatedIds`, and a `confidence` level. Empty, malformed, non-POST, and messages over 500 characters are rejected without exposing internal errors.
 
+## Hero Avatar Chat
+
+The Hero contains a lightweight single-turn question form connected to `POST /api/chat`. It supports idle, thinking, answered, and error states; each new question replaces the previous answer. Three suggested questions use the same submission path as typed input.
+
+Answers appear in a speech bubble anchored beside the existing directional avatar. Up to three traceable source chips are displayed. A chip becomes navigable only when its source resolves to a returned `relatedId` and a real `data-profile-id` in the rendered portfolio; selecting it scrolls to and briefly highlights that item. The avatar's existing pointer-follow behavior is unchanged.
+
 The same pipeline can later accept generated profile data without changing retrieval:
 
 ```text

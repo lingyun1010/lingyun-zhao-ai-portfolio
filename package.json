@@ -5,7 +5,8 @@
   "type": "module",
   "packageManager": "pnpm@11.19.0",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3000",
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "dev:api": "node --env-file-if-exists=.env --experimental-strip-types scripts/dev-api.ts",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 3000",
     "typecheck": "tsc --noEmit",
