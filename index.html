@@ -48,6 +48,7 @@
         z-index: 8;
         pointer-events: none;
         mix-blend-mode: screen;
+        opacity: 0.62;
       }
 
       .ghost-cursor > canvas {
@@ -142,7 +143,7 @@
         background-clip: text;
         -webkit-text-fill-color: transparent;
         white-space: nowrap;
-        font-size: clamp(3.7rem, 14vw, 13rem);
+        font-size: clamp(3.7rem, 11.5vw, 11rem);
         font-weight: 900;
         letter-spacing: 0;
         line-height: 0.82;
@@ -196,10 +197,11 @@
 
       .avatar-chat {
         position: absolute;
-        top: 30%;
+        top: clamp(250px, 37vh, 390px);
         right: clamp(24px, 4vw, 52px);
         z-index: 6;
-        width: min(370px, 31vw);
+        width: min(390px, 30vw);
+        min-width: 300px;
         color: #d7e2ea;
       }
 
@@ -210,10 +212,31 @@
         padding: 18px 20px;
         overflow-y: auto;
         border: 1px solid rgba(215, 226, 234, 0.25);
-        border-radius: 24px 24px 8px 24px;
-        background: rgba(12, 12, 12, 0.84);
+        border-radius: 24px 24px 24px 8px;
+        background: rgba(12, 12, 12, 0.9);
         box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
         backdrop-filter: blur(18px);
+      }
+
+      .avatar-speech::before,
+      .avatar-speech::after {
+        content: "";
+        position: absolute;
+        left: -15px;
+        bottom: 22px;
+        width: 0;
+        height: 0;
+        border-top: 11px solid transparent;
+        border-right: 15px solid rgba(215, 226, 234, 0.25);
+        border-bottom: 11px solid transparent;
+      }
+
+      .avatar-speech::after {
+        left: -13px;
+        bottom: 23px;
+        border-top-width: 10px;
+        border-right: 14px solid rgba(12, 12, 12, 0.94);
+        border-bottom-width: 10px;
       }
 
       .avatar-speech p {
@@ -878,41 +901,86 @@
 
       @media (max-width: 900px) {
         .nav {
-          overflow-x: auto;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 8px clamp(18px, 5vw, 34px);
+          padding: 20px 20px 0;
+          font-size: clamp(0.72rem, 1.8vw, 0.86rem);
         }
 
         .hero {
           min-height: 100svh;
+          padding-bottom: 34px;
+        }
+
+        .hero-title {
+          margin-top: clamp(22px, 5vw, 36px);
+          padding-inline: 16px;
+          overflow: visible;
         }
 
         .hero-heading {
           white-space: normal;
-          font-size: clamp(4rem, 18vw, 8rem);
+          font-size: clamp(3.4rem, 15vw, 7.4rem);
+          line-height: 0.86;
         }
 
         .character-stage {
-          top: 48%;
+          position: relative;
+          left: auto;
           bottom: auto;
-          width: clamp(305px, 82vw, 520px);
-          translate: -50% -50%;
+          flex: 0 0 auto;
+          width: clamp(300px, 68vw, 480px);
+          margin: clamp(16px, 4vw, 30px) auto 0;
+          translate: none;
         }
 
         .hero-bottom {
           align-items: flex-start;
           flex-direction: column;
+          gap: 18px;
+          width: min(620px, 100%);
+          margin: 28px auto 0;
+          padding: 0 20px;
         }
 
         .avatar-chat {
+          position: relative;
           top: auto;
           right: auto;
-          bottom: 150px;
-          left: 50%;
-          width: min(520px, calc(100% - 32px));
-          translate: -50% 0;
+          left: auto;
+          width: min(560px, calc(100% - 32px));
+          min-width: 0;
+          margin: -12px auto 0;
+          translate: none;
         }
 
         .avatar-speech {
           max-height: 160px;
+          overflow: visible auto;
+          border-radius: 22px;
+        }
+
+        .avatar-speech::before,
+        .avatar-speech::after {
+          left: 50%;
+          bottom: auto;
+          translate: -50% 0;
+          border-right: 12px solid transparent;
+          border-bottom: 14px solid rgba(215, 226, 234, 0.25);
+          border-left: 12px solid transparent;
+          border-top: 0;
+        }
+
+        .avatar-speech::before {
+          top: -15px;
+        }
+
+        .avatar-speech::after {
+          top: -13px;
+          border-right-width: 11px;
+          border-bottom: 13px solid rgba(12, 12, 12, 0.94);
+          border-left-width: 11px;
         }
 
         .content-band,
@@ -938,7 +1006,7 @@
         }
 
         .hero-bottom p {
-          max-width: 250px;
+          max-width: 100%;
         }
 
         .contact-button {
@@ -946,11 +1014,17 @@
         }
 
         .hero {
-          min-height: 920px;
+          min-height: 0;
+        }
+
+        .character-stage {
+          width: min(88vw, 390px);
+          margin-top: 18px;
         }
 
         .avatar-chat {
-          bottom: 160px;
+          width: calc(100% - 28px);
+          margin-top: -8px;
         }
 
         .avatar-speech {
@@ -1249,13 +1323,13 @@
         if (!host) return;
 
         const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-        const trailLength = isTouch ? 18 : 25;
+        const trailLength = isTouch ? 12 : 18;
         const inertia = 0.08;
-        const grainIntensity = 0.08;
-        const bloomStrength = 0.5;
-        const bloomRadius = 1.9;
-        const bloomThreshold = 0.025;
-        const brightness = 1;
+        const grainIntensity = 0.045;
+        const bloomStrength = 0.18;
+        const bloomRadius = 0.8;
+        const bloomThreshold = 0.14;
+        const brightness = 0.48;
         const edgeIntensity = 0;
         const maxDevicePixelRatio = 0.55;
         const targetPixels = isTouch ? 900000 : 1300000;
@@ -1319,7 +1393,7 @@
               fbm(p * iScale + q * 1.5 + vec2(8.3, 2.8) + iTime * 0.15)
             );
             float smoke = fbm(p * iScale + r * 0.8);
-            float radius = 0.5 + 0.3 * (1.0 / iScale);
+            float radius = 0.34 + 0.18 * (1.0 / iScale);
             float distFactor = 1.0 - smoothstep(0.0, radius * activity, length(p - mousePos));
             float alpha = pow(smoke, 2.5) * distFactor;
             vec3 c1 = mix(iBaseColor, vec3(1.0), 0.15);
@@ -1343,7 +1417,7 @@
               float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
               t = pow(t, 2.0);
               if (t > 0.01) {
-                vec4 trailBlob = blob(uv, pm, t * 0.8, iOpacity);
+                vec4 trailBlob = blob(uv, pm, t * 0.42, iOpacity);
                 colorAcc += trailBlob.rgb;
                 alphaAcc += trailBlob.a;
               }
