@@ -117,6 +117,77 @@ profile.ts or generated profile data
 
 That ingestion step should validate extracted facts, preserve stable IDs where records match, and flag conflicts for review before replacing the canonical profile data.
 
+## RAG Architecture
+
+The RAG service is deliberately isolated from the browser application. The static portfolio never imports the server-side modules or receives the OpenAI API key.
+
+```text
+profile.ts
+   ↓
+KnowledgeChunk[]
+   ↓
+precomputed embeddings
+   ↓
+generated/rag-index.json
+
+Visitor question
+   ↓
+POST /api/chat
+   ↓
+query embedding
+   ↓
+cosine similarity + relevance threshold
+   ↓
+intent-aware type reranking
+   ↓
+top-k profile chunks
+   ↓
+grounded OpenAI response
+   ↓
+structured PortfolioAnswer
+```
+
+The portfolio knowledge base is small, so in-memory vector search keeps the architecture lightweight and transparent while preserving a real embedding-based RAG pipeline. An external vector database is intentionally not used.
+
+After cosine similarity, a deterministic intent detector recognizes project, professional-experience, education, and skill questions. A matching chunk type receives a modest `1.18` score multiplier. Other chunk types are never filtered out. The normal raw-vector threshold is `0.30`; an explicitly requested entity type may pass a separate `0.17` floor so a low-scoring but structurally relevant record, such as education, is not discarded before reranking. Debug output reports both the raw vector score and final reranked score.
+
+Copy `.env.example` to a local `.env` and set `OPENAI_API_KEY`. Secrets must be configured only in the server environment and must never use a `VITE_` prefix. `OPENAI_EMBEDDING_MODEL` defaults to `text-embedding-3-small`; `OPENAI_ANSWER_MODEL` defaults to `gpt-5-mini`.
+
+Build and commit the generated index whenever canonical profile content or the embedding model changes:
+
+```bash
+pnpm rag:build
+```
+
+`generated/rag-index.json` is intended to be version-controlled because it is immutable derived portfolio data required by the serverless function. It contains profile text and numeric embeddings, but no API key. It has not been generated until `rag:build` completes successfully.
+
+To inspect retrieval and a final answer locally:
+
+```bash
+pnpm rag:test -- "What AI projects have you built?"
+```
+
+The serverless endpoint accepts a stateless request:
+
+```json
+POST /api/chat
+{ "message": "What experience do you have with RAG?" }
+```
+
+It returns an `answer`, traceable `sources`, stable `relatedIds`, and a `confidence` level. Empty, malformed, non-POST, and messages over 500 characters are rejected without exposing internal errors.
+
+The same pipeline can later accept generated profile data without changing retrieval:
+
+```text
+User uploads CV.pdf
+↓
+profile extraction and review
+↓
+Profile
+↓
+same chunking and RAG pipeline
+```
+
 This README intentionally avoids publishing personal contact details. The live site may contain user-facing contact UI, but repository documentation should not expose private contact information.
 
 ## Tech Stack
