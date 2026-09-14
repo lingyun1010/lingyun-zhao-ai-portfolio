@@ -90,6 +90,33 @@ The page is organized as a single scrollable portfolio:
 - **Experience**: production software engineering background.
 - **Education and contact panel**: academic background and site-level contact area.
 
+## Profile Data Architecture
+
+`src/data/profile.ts` is the canonical structured representation of the portfolio's CV-derived content. It keeps identity, contact details, skills, services, experience, education, and projects separate from the React presentation layer, with stable IDs for every major record.
+
+```text
+Current phase:
+
+Existing CV-derived content
+          ↓
+     profile.ts
+      /       \
+     ↓         ↓
+Portfolio UI  Future RAG pipeline
+```
+
+The next planned phase will connect the source CV to this structure:
+
+```text
+CV.pdf
+↓
+automatic profile extraction / sync
+↓
+profile.ts or generated profile data
+```
+
+That ingestion step should validate extracted facts, preserve stable IDs where records match, and flag conflicts for review before replacing the canonical profile data.
+
 This README intentionally avoids publishing personal contact details. The live site may contain user-facing contact UI, but repository documentation should not expose private contact information.
 
 ## Tech Stack

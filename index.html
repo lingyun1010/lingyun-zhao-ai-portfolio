@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Lingyun Zhao - AI engineer, full-stack software engineer and computer vision researcher."
+      content=""
     />
-    <title>Lingyun Zhao - AI Engineer</title>
+    <title>Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -793,8 +793,8 @@
         </nav>
 
         <div class="hero-title">
-          <p class="hero-kicker">AI Engineer | Full-stack Software Engineer | Computer Vision</p>
-          <h1 class="hero-heading">Hi, I am Lingyun</h1>
+          <p class="hero-kicker" id="profileHeadline"></p>
+          <h1 class="hero-heading" id="profileGreeting"></h1>
         </div>
 
         <div class="character-stage" aria-label="Animated character portrait controlled by pointer direction">
@@ -803,105 +803,29 @@
             id="characterFrame"
             class="character-frame"
             src="angle-frames/center.png"
-            alt="Cartoon character portrait of Lingyun Zhao"
+            alt=""
           />
         </div>
 
         <div class="hero-bottom">
-          <p>Applied GenAI, RAG systems and computer vision research shaped into useful production software.</p>
-          <a class="contact-button" href="mailto:zhaolingyun1010@gmail.com">Contact me</a>
+          <p id="profileIntroduction"></p>
+          <a class="contact-button" id="profileContactButton">Contact me</a>
         </div>
       </section>
 
-      <section class="content-band" id="work" aria-label="Portfolio highlights">
-        <article>
-          <h2>Applied GenAI</h2>
-          <p>RAG applications, LLM workflows, AI agents, structured outputs and tool-based routing.</p>
-        </article>
-        <article id="systems">
-          <h2>Production Systems</h2>
-          <p>React, TypeScript, JavaScript, REST services, PostgreSQL, Solr, data pipelines and AWS.</p>
-        </article>
-        <article>
-          <h2>Vision & 3D</h2>
-          <p>PhD research in image processing, depth estimation, image dehazing, 3D reconstruction and WebGL.</p>
-        </article>
-      </section>
+      <section class="content-band" id="work" aria-label="Portfolio highlights"></section>
 
       <section class="marquee-wrap" aria-label="Technical focus areas">
-        <div class="marquee">
-          <span>LLM apps</span>
-          <span>RAG systems</span>
-          <span>AI agents</span>
-          <span>Vector search</span>
-          <span>Computer vision</span>
-          <span>WebGL</span>
-          <span>React</span>
-          <span>TypeScript</span>
-          <span>PostgreSQL</span>
-          <span>LLM apps</span>
-          <span>RAG systems</span>
-          <span>AI agents</span>
-          <span>Vector search</span>
-          <span>Computer vision</span>
-          <span>WebGL</span>
-          <span>React</span>
-          <span>TypeScript</span>
-          <span>PostgreSQL</span>
-        </div>
+        <div class="marquee" id="profileMarquee"></div>
       </section>
 
       <section class="section-dark" id="about">
         <div class="section-head">
           <h2 class="hero-heading">About me</h2>
-          <p>
-            I bring 7+ years of production engineering experience together with a PhD in Computer Vision.
-            My current focus is applied GenAI: RAG applications, AI agents, LLM workflows and structured
-            knowledge pipelines that are clear enough to trust and robust enough to ship.
-          </p>
+          <p id="profileSummary"></p>
         </div>
 
-        <div class="skills-grid">
-          <article class="skill-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <strong>AI Systems</strong>
-            <span>Generative AI</span>
-            <span>LLM applications</span>
-            <span>RAG</span>
-            <span>Embeddings</span>
-            <span>Vector search</span>
-            <span>Tool calling</span>
-          </article>
-          <article class="skill-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <strong>Product Engineering</strong>
-            <span>React</span>
-            <span>TypeScript</span>
-            <span>JavaScript</span>
-            <span>Node.js</span>
-            <span>Java</span>
-            <span>REST APIs</span>
-          </article>
-          <article class="skill-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <strong>Data Platforms</strong>
-            <span>PostgreSQL</span>
-            <span>SQL</span>
-            <span>Solr</span>
-            <span>Data pipelines</span>
-            <span>Information retrieval</span>
-          </article>
-          <article class="skill-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <strong>Vision & 3D</strong>
-            <span>Computer vision</span>
-            <span>Image processing</span>
-            <span>Depth estimation</span>
-            <span>Image dehazing</span>
-            <span>3D reconstruction</span>
-            <span>WebGL</span>
-          </article>
-        </div>
+        <div class="skills-grid" id="profileSkills"></div>
       </section>
 
       <section class="section-light services" id="services">
@@ -910,36 +834,7 @@
           <p>Focused engineering work across AI product systems, full-stack delivery, search and visual computing.</p>
         </div>
 
-        <div class="service-list">
-          <article class="service-item">
-            <span>01</span>
-            <div>
-              <h3>Applied GenAI</h3>
-              <p>RAG applications, LLM-powered workflows, AI agents and structured outputs designed for reliable user-facing products.</p>
-            </div>
-          </article>
-          <article class="service-item">
-            <span>02</span>
-            <div>
-              <h3>Full-stack Delivery</h3>
-              <p>Production features across React, JavaScript, REST services, data flows, release practices and operational handover.</p>
-            </div>
-          </article>
-          <article class="service-item">
-            <span>03</span>
-            <div>
-              <h3>Knowledge Systems</h3>
-              <p>Structured knowledge, retrieval, search and traceable AI workflows that make complex data easier to use.</p>
-            </div>
-          </article>
-          <article class="service-item">
-            <span>04</span>
-            <div>
-              <h3>Computer Vision</h3>
-              <p>Research-grounded image processing, depth estimation, dehazing, layered scene modelling and 3D visualisation.</p>
-            </div>
-          </article>
-        </div>
+        <div class="service-list" id="profileServices"></div>
       </section>
 
       <section class="section-dark projects" id="projects">
@@ -947,66 +842,16 @@
           <h2 class="hero-heading">Projects</h2>
         </div>
 
-        <div class="project-grid">
-          <article class="project-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <span class="project-number">01</span>
-            <p class="project-type">AI content intelligence</p>
-            <h3>TikTok Content Agent</h3>
-            <p>An analyst platform combining structured data, LLM analysis, routing and an interactive dashboard.</p>
-            <div class="tags">
-              <span>Classification</span>
-              <span>Tool routing</span>
-              <span>Human review</span>
-              <span>Traceability</span>
-            </div>
-          </article>
-          <article class="project-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <span class="project-number">02</span>
-            <p class="project-type">Retrieval augmented generation</p>
-            <h3>E-commerce RAG Support Agent</h3>
-            <p>A customer-support system with intent routing, retrieval, grounded generation, source attribution and escalation logic.</p>
-            <div class="tags">
-              <span>Intent routing</span>
-              <span>Source attribution</span>
-              <span>Controlled generation</span>
-              <span>Escalation</span>
-            </div>
-          </article>
-          <article class="project-card">
-            <span class="edge-light" aria-hidden="true"></span>
-            <span class="project-number">03</span>
-            <p class="project-type">Scientific data platform</p>
-            <h3>Expression Atlas</h3>
-            <p>Production search, exploration and visualisation workflows for a global scientific research platform at EMBL-EBI.</p>
-            <div class="tags">
-              <span>React</span>
-              <span>REST services</span>
-              <span>Solr</span>
-              <span>Data visualisation</span>
-            </div>
-          </article>
-        </div>
+        <div class="project-grid" id="profileProjects"></div>
       </section>
 
       <section class="section-light" id="experience">
         <div class="experience-layout">
           <div>
             <span class="eyebrow">Professional experience</span>
-            <h2>Production software for data-intensive science</h2>
+            <h2 id="profileExperienceSummary"></h2>
           </div>
-          <article class="experience-card">
-            <p class="period">July 2018 - September 2025 | Cambridge, UK</p>
-            <h3>Senior Software Engineer / Big Data Engineer</h3>
-            <p>EMBL-EBI - European Bioinformatics Institute</p>
-            <ul>
-              <li>Built production features for Expression Atlas, a scientific data platform for global researchers.</li>
-              <li>Delivered full-stack workflows across React, JavaScript, REST services, data systems and infrastructure.</li>
-              <li>Worked with UX, biology, backend, data-production and infrastructure teams to translate complex requirements into usable products.</li>
-              <li>Supported system design, documentation, testing, deployment and cross-functional agile delivery.</li>
-            </ul>
-          </article>
+          <article class="experience-card" id="profileExperience"></article>
         </div>
       </section>
 
@@ -1014,26 +859,85 @@
         <div class="contact-layout">
           <div>
             <span class="eyebrow">Education</span>
-            <h2>PhD, Computer Vision</h2>
-            <p>Queen Mary University of London | Scene Estimation and Modelling in Haze | July 2014 - July 2019</p>
-            <p>BSc, Telecommunications and Management | First Class Honours | September 2010 - July 2014</p>
+            <div id="profileEducation"></div>
           </div>
           <div class="contact-panel">
             <span class="eyebrow">Contact</span>
             <h2>Let us build useful AI with a little visual magic.</h2>
-            <a href="mailto:zhaolingyun1010@gmail.com">zhaolingyun1010@gmail.com</a>
-            <span>Sydney, NSW, Australia</span>
+            <a id="profileEmail"></a>
+            <span id="profileLocation"></span>
           </div>
         </div>
       </section>
     </main>
 
     <script type="module">
+      import { profile } from "./src/data/profile.ts";
       import * as THREE from "three";
       import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
       import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
       import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
       import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+      const setText = (id, value) => {
+        const element = document.querySelector(`#${id}`);
+        if (element) element.textContent = value ?? "";
+      };
+
+      const emailHref = profile.contact?.email ? `mailto:${profile.contact.email}` : "#contact";
+      document.title = `${profile.name} - ${profile.headline.split(" | ")[0]}`;
+      document.querySelector('meta[name="description"]')?.setAttribute("content", `${profile.name} - ${profile.headline}.`);
+      setText("profileHeadline", profile.headline);
+      setText("profileGreeting", `Hi, I am ${profile.preferredName}`);
+      setText("profileIntroduction", profile.introduction);
+      setText("profileSummary", profile.summary);
+      setText("profileLocation", profile.location);
+      setText("profileEmail", profile.contact?.email);
+      document.querySelector("#profileEmail")?.setAttribute("href", emailHref);
+      document.querySelector("#profileContactButton")?.setAttribute("href", emailHref);
+      document.querySelector("#characterFrame")?.setAttribute("alt", `Cartoon character portrait of ${profile.name}`);
+
+      const renderList = (id, items, renderItem) => {
+        const element = document.querySelector(`#${id}`);
+        if (element) element.innerHTML = items.map(renderItem).join("");
+      };
+
+      renderList("work", profile.highlights, (item) => `
+        <article${item.id === "production-systems" ? ' id="systems"' : ""}>
+          <h2>${item.title}</h2><p>${item.description}</p>
+        </article>`);
+      renderList("profileMarquee", [...profile.focusAreas, ...profile.focusAreas], (item) => `<span>${item}</span>`);
+      renderList("profileSkills", profile.skills, (group) => `
+        <article class="skill-card" data-profile-id="${group.id}">
+          <span class="edge-light" aria-hidden="true"></span>
+          <strong>${group.category}</strong>${group.items.map((item) => `<span>${item}</span>`).join("")}
+        </article>`);
+      renderList("profileServices", profile.services, (service, index) => `
+        <article class="service-item" data-profile-id="${service.id}">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <div><h3>${service.name}</h3><p>${service.description}</p></div>
+        </article>`);
+      renderList("profileProjects", profile.projects, (project, index) => `
+        <article class="project-card" data-profile-id="${project.id}">
+          <span class="edge-light" aria-hidden="true"></span>
+          <span class="project-number">${String(index + 1).padStart(2, "0")}</span>
+          <p class="project-type">${project.category}</p>
+          <h3>${project.title}</h3><p>${project.shortDescription}</p>
+          <div class="tags">${(project.tags ?? []).map((tag) => `<span>${tag}</span>`).join("")}</div>
+        </article>`);
+
+      const experience = profile.experience[0];
+      setText("profileExperienceSummary", experience.summary);
+      document.querySelector("#profileExperience").innerHTML = `
+        <p class="period">${experience.startDate} - ${experience.endDate} | ${experience.location}</p>
+        <h3>${experience.role}</h3><p>${experience.company}</p>
+        <ul>${(experience.highlights ?? []).map((highlight) => `<li>${highlight}</li>`).join("")}</ul>`;
+
+      const educationLine = (item) => [item.institution, item.description, item.honours, `${item.startDate} - ${item.endDate}`]
+        .filter(Boolean).join(" | ");
+      document.querySelector("#profileEducation").innerHTML = profile.education.map((item, index) =>
+        `${index === 0 ? `<h2>${item.degree}</h2>` : ""}<p>${index === 0 ? educationLine(item) : `${item.degree} | ${educationLine(item)}`}</p>`
+      ).join("");
 
       function initGhostCursor(host) {
         if (!host) return;

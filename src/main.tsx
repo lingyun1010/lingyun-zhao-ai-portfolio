@@ -12,103 +12,23 @@ import {
   SearchCode,
   Sparkles,
 } from 'lucide-react'
+import { profile } from './data/profile'
 import './styles.css'
 
 type IconType = React.ComponentType<{ size?: number; 'aria-hidden'?: boolean }>
 
-type SkillGroup = {
-  title: string
-  icon: IconType
-  items: string[]
+const skillIcons: Record<string, IconType> = {
+  'ai-systems': BrainCircuit,
+  'product-engineering': Code2,
+  'data-platforms': DatabaseZap,
+  'vision-and-3d': Orbit,
 }
 
-const marqueeItems = [
-  'LLM apps',
-  'RAG systems',
-  'AI agents',
-  'Vector search',
-  'Computer vision',
-  'React',
-  'TypeScript',
-  'Node.js',
-  'PostgreSQL',
-  'Solr',
-  'WebGL',
-  'AWS',
-]
-
-const skillGroups: SkillGroup[] = [
-  {
-    title: 'AI Systems',
-    icon: BrainCircuit,
-    items: ['Generative AI', 'LLM applications', 'RAG', 'Embeddings', 'Vector search', 'Tool calling', 'AI agents'],
-  },
-  {
-    title: 'Product Engineering',
-    icon: Code2,
-    items: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Java', 'REST APIs', 'Automated testing'],
-  },
-  {
-    title: 'Data Platforms',
-    icon: DatabaseZap,
-    items: ['PostgreSQL', 'SQL', 'Solr', 'Data pipelines', 'Information retrieval', 'Structured knowledge'],
-  },
-  {
-    title: 'Vision & 3D',
-    icon: Orbit,
-    items: ['Computer vision', 'Image processing', 'Depth estimation', 'Image dehazing', '3D scene reconstruction', 'WebGL'],
-  },
-]
-
-const services = [
-  {
-    number: '01',
-    name: 'Applied GenAI',
-    text: 'RAG applications, LLM-powered workflows, AI agents and structured outputs designed for reliable user-facing products.',
-  },
-  {
-    number: '02',
-    name: 'Full-stack Delivery',
-    text: 'Production features across React, JavaScript, REST services, data flows, release practices and operational handover.',
-  },
-  {
-    number: '03',
-    name: 'Knowledge Systems',
-    text: 'Structured knowledge, retrieval, search and traceable AI workflows that make complex data easier to use.',
-  },
-  {
-    number: '04',
-    name: 'Computer Vision',
-    text: 'Research-grounded image processing, depth estimation, dehazing, layered scene modelling and 3D visualisation.',
-  },
-]
-
-const projects = [
-  {
-    number: '01',
-    category: 'AI content intelligence',
-    name: 'TikTok Content Agent',
-    text: 'An analyst platform combining structured data, LLM analysis, routing and an interactive dashboard.',
-    tags: ['Classification', 'Tool-based routing', 'Human review', 'Traceability'],
-    icon: Bot,
-  },
-  {
-    number: '02',
-    category: 'Retrieval augmented generation',
-    name: 'E-commerce RAG Support Agent',
-    text: 'A customer-support system with intent routing, retrieval, grounded generation, source attribution and escalation logic.',
-    tags: ['Intent routing', 'Source attribution', 'Controlled generation', 'Escalation'],
-    icon: SearchCode,
-  },
-  {
-    number: '03',
-    category: 'Scientific data platform',
-    name: 'Expression Atlas',
-    text: 'Production search, exploration and visualisation workflows for a global scientific research platform at EMBL-EBI.',
-    tags: ['React', 'REST services', 'Solr', 'Data visualisation'],
-    icon: Sparkles,
-  },
-]
+const projectIcons: Record<string, IconType> = {
+  'tiktok-content-agent': Bot,
+  'ecommerce-rag-support-agent': SearchCode,
+  'expression-atlas': Sparkles,
+}
 
 function useScrollOffset() {
   const [offset, setOffset] = useState(0)
@@ -125,7 +45,7 @@ function useScrollOffset() {
 
 function ContactButton({ compact = false }: { compact?: boolean }) {
   return (
-    <a className={compact ? 'contact-button compact' : 'contact-button'} href="mailto:zhaolingyun1010@gmail.com">
+    <a className={compact ? 'contact-button compact' : 'contact-button'} href={`mailto:${profile.contact?.email}`}>
       <Mail size={18} aria-hidden />
       Contact me
     </a>
@@ -158,7 +78,7 @@ function AvatarWithTrackingEyes() {
   return (
     <div className="portrait-stage" aria-label="Cartoon portrait with eyes following the pointer">
       <div className="portrait-glow" aria-hidden />
-      <img src="/avatar.jpeg" alt="Cartoon portrait of Lingyun Zhao" />
+      <img src="/avatar.jpeg" alt={`Cartoon portrait of ${profile.name}`} />
       <span className="tracked-eye left-eye" aria-hidden>
         <span className="tracked-pupil" style={pupilStyle} />
       </span>
@@ -180,14 +100,14 @@ function HeroSection() {
       </nav>
 
       <div className="hero-title-wrap">
-        <p className="hero-kicker">AI Engineer | Full-stack Software Engineer | Computer Vision</p>
-        <h1 className="hero-heading">Hi, I am Lingyun</h1>
+        <p className="hero-kicker">{profile.headline}</p>
+        <h1 className="hero-heading">Hi, I am {profile.preferredName}</h1>
       </div>
 
       <AvatarWithTrackingEyes />
 
       <div className="hero-bottom">
-        <p>Applied GenAI, RAG systems and computer vision research shaped into useful production software.</p>
+        <p>{profile.introduction}</p>
         <ContactButton />
       </div>
     </section>
@@ -196,8 +116,8 @@ function HeroSection() {
 
 function MarqueeSection() {
   const offset = useScrollOffset()
-  const rowOne = [...marqueeItems.slice(0, 6), ...marqueeItems.slice(0, 6), ...marqueeItems.slice(0, 6)]
-  const rowTwo = [...marqueeItems.slice(6), ...marqueeItems.slice(6), ...marqueeItems.slice(6)]
+  const rowOne = [...profile.focusAreas.slice(0, 6), ...profile.focusAreas.slice(0, 6), ...profile.focusAreas.slice(0, 6)]
+  const rowTwo = [...profile.focusAreas.slice(6), ...profile.focusAreas.slice(6), ...profile.focusAreas.slice(6)]
 
   return (
     <section className="marquee-section" aria-label="Technical focus areas">
@@ -216,8 +136,8 @@ function MarqueeSection() {
 }
 
 function AboutSection() {
-  const [activeSkill, setActiveSkill] = useState(skillGroups[0].title)
-  const selected = skillGroups.find((group) => group.title === activeSkill) ?? skillGroups[0]
+  const [activeSkill, setActiveSkill] = useState(profile.skills[0].id)
+  const selected = profile.skills.find((group) => group.id === activeSkill) ?? profile.skills[0]
 
   return (
     <section className="about section-dark" id="about">
@@ -227,28 +147,24 @@ function AboutSection() {
 
       <div className="section-head centered">
         <h2 className="hero-heading">About me</h2>
-        <p>
-          I bring 7+ years of production engineering experience together with a PhD in Computer Vision.
-          My current focus is applied GenAI: RAG applications, AI agents, LLM workflows and structured
-          knowledge pipelines that are clear enough to trust and robust enough to ship.
-        </p>
+        <p>{profile.summary}</p>
       </div>
 
       <div className="skill-console">
         <div className="skill-tabs" role="tablist" aria-label="Skill groups">
-          {skillGroups.map((group) => {
-            const Icon = group.icon
+          {profile.skills.map((group) => {
+            const Icon = skillIcons[group.id]
             return (
               <button
-                key={group.title}
-                className={group.title === activeSkill ? 'active' : ''}
+                key={group.id}
+                className={group.id === activeSkill ? 'active' : ''}
                 type="button"
                 role="tab"
-                aria-selected={group.title === activeSkill}
-                onClick={() => setActiveSkill(group.title)}
+                aria-selected={group.id === activeSkill}
+                onClick={() => setActiveSkill(group.id)}
               >
                 <Icon size={19} aria-hidden />
-                {group.title}
+                {group.category}
               </button>
             )
           })}
@@ -268,12 +184,12 @@ function ServicesSection() {
     <section className="services" id="services">
       <h2>Services</h2>
       <div className="service-list">
-        {services.map((service) => (
-          <article className="service-item" key={service.number}>
-            <span>{service.number}</span>
+        {profile.services.map((service, index) => (
+          <article className="service-item" key={service.id}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
             <div>
               <h3>{service.name}</h3>
-              <p>{service.text}</p>
+              <p>{service.description}</p>
             </div>
           </article>
         ))}
@@ -289,14 +205,14 @@ function ProjectsSection() {
         <h2 className="hero-heading">Projects</h2>
       </div>
       <div className="project-stack">
-        {projects.map((project, index) => {
-          const Icon = project.icon
+        {profile.projects.map((project, index) => {
+          const Icon = projectIcons[project.id]
           return (
-            <article className="project-card" style={{ top: `${96 + index * 26}px` }} key={project.name}>
+            <article className="project-card" style={{ top: `${96 + index * 26}px` }} key={project.id}>
               <div className="project-card-top">
-                <span>{project.number}</span>
+                <span>{String(index + 1).padStart(2, '0')}</span>
                 <p>{project.category}</p>
-                <h3>{project.name}</h3>
+                <h3>{project.title}</h3>
                 <a href="#contact">Discuss work</a>
               </div>
               <div className="project-card-body">
@@ -305,9 +221,9 @@ function ProjectsSection() {
                   <MousePointer2 className="cursor-mark" size={34} aria-hidden />
                 </div>
                 <div className="project-copy">
-                  <p>{project.text}</p>
+                  <p>{project.shortDescription}</p>
                   <div className="tag-list">
-                    {project.tags.map((tag) => (
+                    {project.tags?.map((tag) => (
                       <span key={tag}>{tag}</span>
                     ))}
                   </div>
@@ -322,22 +238,21 @@ function ProjectsSection() {
 }
 
 function ExperienceSection() {
+  const experience = profile.experience[0]
+
   return (
     <section className="experience">
       <div className="experience-grid">
         <div>
           <p className="eyebrow">Professional experience</p>
-          <h2>Production software for data-intensive science</h2>
+          <h2>{experience.summary}</h2>
         </div>
         <article>
-          <p className="period">July 2018 - September 2025 | Cambridge, UK</p>
-          <h3>Senior Software Engineer / Big Data Engineer</h3>
-          <p className="org">EMBL-EBI - European Bioinformatics Institute</p>
+          <p className="period">{experience.startDate} - {experience.endDate} | {experience.location}</p>
+          <h3>{experience.role}</h3>
+          <p className="org">{experience.company}</p>
           <ul>
-            <li>Built production features for Expression Atlas, a scientific data platform for global researchers.</li>
-            <li>Delivered full-stack workflows across React, JavaScript, REST services, data systems and infrastructure.</li>
-            <li>Worked with UX, biology, backend, data-production and infrastructure teams to translate complex requirements into usable products.</li>
-            <li>Supported system design, documentation, testing, deployment and cross-functional agile delivery.</li>
+            {experience.highlights?.map((highlight) => <li key={highlight}>{highlight}</li>)}
           </ul>
         </article>
       </div>
@@ -346,24 +261,26 @@ function ExperienceSection() {
 }
 
 function ContactSection() {
+  const [phd, bachelors] = profile.education
+
   return (
     <section className="contact" id="contact">
       <div>
         <p className="eyebrow">Education</p>
-        <h2>PhD, Computer Vision</h2>
-        <p>Queen Mary University of London | Scene Estimation and Modelling in Haze | July 2014 - July 2019</p>
-        <p>BSc, Telecommunications and Management | First Class Honours | September 2010 - July 2014</p>
+        <h2>{phd.degree}</h2>
+        <p>{phd.institution} | {phd.description} | {phd.startDate} - {phd.endDate}</p>
+        <p>{bachelors.degree} | {bachelors.honours} | {bachelors.startDate} - {bachelors.endDate}</p>
       </div>
       <div className="contact-panel">
         <p className="eyebrow">Contact</p>
         <h2>Let us build useful AI with a little visual magic.</h2>
-        <a href="mailto:zhaolingyun1010@gmail.com">
+        <a href={`mailto:${profile.contact?.email}`}>
           <Mail size={20} aria-hidden />
-          zhaolingyun1010@gmail.com
+          {profile.contact?.email}
         </a>
         <span>
           <MapPin size={20} aria-hidden />
-          Sydney, NSW, Australia
+          {profile.location}
         </span>
       </div>
     </section>
