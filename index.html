@@ -24,6 +24,12 @@
         -webkit-font-smoothing: antialiased;
       }
 
+      @property --highlight-progress {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: -24%;
+      }
+
       * {
         box-sizing: border-box;
         margin: 0;
@@ -554,6 +560,21 @@
           radial-gradient(circle at 18% 18%, rgba(255, 89, 195, 0.2), transparent 34%);
       }
 
+      .motion-ready .reveal-on-scroll {
+        opacity: 0;
+        transform: translate3d(0, 72px, 0) scale(0.96);
+        transition:
+          opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: var(--reveal-delay, 0ms);
+        will-change: opacity, transform;
+      }
+
+      .motion-ready .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
       .content-band h2 {
         margin-bottom: 10px;
         color: #ffffff;
@@ -650,6 +671,34 @@
         font-size: clamp(1rem, 1.8vw, 1.35rem);
         font-weight: 300;
         line-height: 1.65;
+      }
+
+      .motion-ready .about-copy h2,
+      .motion-ready .about-copy p {
+        --highlight-progress: -24%;
+        color: transparent;
+        background: linear-gradient(
+          to bottom,
+          rgba(238, 247, 252, 0.98) 0%,
+          rgba(238, 247, 252, 0.98) var(--highlight-progress),
+          rgba(215, 226, 234, 0.68) calc(var(--highlight-progress) + 10%),
+          rgba(215, 226, 234, 0.22) calc(var(--highlight-progress) + 24%),
+          rgba(215, 226, 234, 0.22) 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: --highlight-progress 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .motion-ready .about-copy p {
+        transition-duration: 1.15s;
+        transition-delay: 950ms;
+      }
+
+      .motion-ready .about-copy.is-visible h2,
+      .motion-ready .about-copy.is-visible p {
+        --highlight-progress: 100%;
       }
 
       .section-light .section-head p {
@@ -896,20 +945,29 @@
       }
 
       .project-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-        width: min(1120px, 100%);
+        display: block;
+        width: min(1200px, 100%);
         margin: 0 auto;
+        padding-bottom: clamp(80px, 16vh, 180px);
       }
 
       .project-card {
-        min-height: 390px;
-        padding: 26px;
+        position: sticky;
+        top: calc(clamp(74px, 12vh, 130px) + var(--stack-index, 0) * 18px);
+        z-index: calc(10 + var(--stack-index, 0));
+        min-height: 480px;
+        margin-bottom: clamp(72px, 14vh, 150px);
+        padding: clamp(24px, 4vw, 42px);
         --edge-sensitivity: 28;
         --color-sensitivity: 45;
         --glow-padding: 48px;
         --fill-opacity: 0.38;
+        transform-origin: top center;
+        transition: transform 0.16s linear;
+      }
+
+      .project-card:last-child {
+        margin-bottom: 0;
       }
 
       .project-number {
@@ -928,7 +986,7 @@
         border: 1px solid rgba(215, 226, 234, 0.14);
         border-radius: 18px;
         background: rgba(215, 226, 234, 0.06);
-        aspect-ratio: 16 / 10;
+        height: clamp(320px, 32vw, 360px);
       }
 
       .project-media img {
@@ -1014,7 +1072,7 @@
 
       .experience-layout h2,
       .contact-layout h2 {
-        font-size: clamp(2.2rem, 5vw, 5rem);
+        font-size: clamp(2.2rem, 1vw, 5rem);
         font-weight: 900;
         letter-spacing: 0;
         line-height: 0.92;
@@ -1073,7 +1131,7 @@
         min-height: 50px;
         margin-top: 18px;
         color: #ffffff;
-        font-size: 1rem;
+        font-size: 1.05rem;
       }
 
       @media (max-width: 900px) {
@@ -1185,11 +1243,16 @@
 
         .content-band,
         .skills-grid,
-        .project-grid,
         .experience-layout,
         .contact-layout,
         .service-item {
           grid-template-columns: 1fr;
+        }
+
+        .project-card {
+          top: calc(76px + var(--stack-index, 0) * 10px);
+          min-height: 420px;
+          margin-bottom: 72px;
         }
       }
 
@@ -1215,6 +1278,21 @@
 
         .hero {
           min-height: 0;
+        }
+
+        .project-grid {
+          padding-bottom: 72px;
+        }
+
+        .project-card {
+          top: calc(64px + var(--stack-index, 0) * 7px);
+          min-height: 380px;
+          margin-bottom: 54px;
+          border-radius: 24px;
+        }
+
+        .project-media {
+          height: 180px;
         }
 
         .character-stage {
@@ -1249,6 +1327,20 @@
         .avatar-speech {
           min-height: 64px;
           padding: 15px 16px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .motion-ready .reveal-on-scroll {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+
+        .motion-ready .about-copy h2,
+        .motion-ready .about-copy p {
+          --highlight-progress: 100%;
+          transition: none;
         }
       }
 
@@ -1330,7 +1422,7 @@
       </section>
 
       <section class="section-dark" id="about">
-        <div class="section-head">
+        <div class="section-head about-copy">
           <h2 class="hero-heading">About me</h2>
           <p id="profileSummary"></p>
         </div>
@@ -1581,12 +1673,12 @@
       );
 
       renderList("work", profile.highlights, (item) => `
-        <article${item.id === "production-systems" ? ' id="systems"' : ""} data-profile-id="${item.id}">
+        <article class="reveal-on-scroll" style="--reveal-delay: ${profile.highlights.indexOf(item) * 110}ms"${item.id === "production-systems" ? ' id="systems"' : ""} data-profile-id="${item.id}">
           <h2>${item.title}</h2><p>${item.description}</p>
         </article>`);
       renderList("profileMarquee", [...profile.focusAreas, ...profile.focusAreas], (item) => `<span>${item}</span>`);
       renderList("profileSkills", profile.skills, (group) => `
-        <article class="skill-card" data-profile-id="${group.id}">
+        <article class="skill-card reveal-on-scroll" style="--reveal-delay: ${profile.skills.indexOf(group) * 90}ms" data-profile-id="${group.id}">
           <span class="edge-light" aria-hidden="true"></span>
           <strong>${group.category}</strong>${group.items.map((item) => `<span>${item}</span>`).join("")}
         </article>`);
@@ -1596,7 +1688,7 @@
           <div><h3>${service.name}</h3><p>${service.description}</p></div>
         </article>`);
       renderList("profileProjects", profile.projects, (project, index) => `
-        <article class="project-card" data-profile-id="${project.id}">
+        <article class="project-card" data-profile-id="${project.id}" style="--stack-index: ${index}">
           <span class="edge-light" aria-hidden="true"></span>
           <span class="project-number">${String(index + 1).padStart(2, "0")}</span>
           ${project.image ? `<a class="project-media" href="${project.links?.[0]?.url ?? "#projects"}" target="_blank" rel="noreferrer"><img src="${project.image}" alt="${project.imageAlt ?? project.title}" loading="lazy"></a>` : ""}
@@ -1605,6 +1697,71 @@
           <div class="tags">${(project.tags ?? []).map((tag) => `<span>${tag}</span>`).join("")}</div>
           <div class="project-links">${(project.links ?? []).map((link) => `<a href="${link.url}" target="_blank" rel="noreferrer">${link.label} ↗</a>`).join("")}</div>
         </article>`);
+
+      const projectCards = [...document.querySelectorAll(".project-card")];
+      const projectMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let projectStackFrame = 0;
+
+      function updateProjectStack() {
+        projectStackFrame = 0;
+        if (projectMotionQuery.matches) {
+          projectCards.forEach((card) => { card.style.transform = "none"; });
+          return;
+        }
+
+        let activeIndex = 0;
+        projectCards.forEach((card, index) => {
+          const stickyTop = Number.parseFloat(getComputedStyle(card).top) || 0;
+          if (card.getBoundingClientRect().top <= stickyTop + 1) activeIndex = index;
+        });
+
+        projectCards.forEach((card, index) => {
+          const depth = Math.max(0, activeIndex - index);
+          card.style.transform = `scale(${Math.max(0.88, 1 - depth * 0.028)})`;
+        });
+      }
+
+      function requestProjectStackUpdate() {
+        if (!projectStackFrame) projectStackFrame = requestAnimationFrame(updateProjectStack);
+      }
+
+      window.addEventListener("scroll", requestProjectStackUpdate, { passive: true });
+      window.addEventListener("resize", requestProjectStackUpdate, { passive: true });
+      projectMotionQuery.addEventListener("change", requestProjectStackUpdate);
+      updateProjectStack();
+
+      const revealTargets = document.querySelectorAll(".reveal-on-scroll, .about-copy");
+      document.documentElement.classList.add("motion-ready");
+      let previousRevealScrollY = window.scrollY;
+      let isRevealScrollingDown = true;
+
+      window.addEventListener("scroll", () => {
+        const nextScrollY = window.scrollY;
+        if (Math.abs(nextScrollY - previousRevealScrollY) > 2) {
+          isRevealScrollingDown = nextScrollY > previousRevealScrollY;
+          previousRevealScrollY = nextScrollY;
+        }
+      }, { passive: true });
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && isRevealScrollingDown) {
+              entry.target.classList.add("is-visible");
+              return;
+            }
+
+            const exitedBelowViewport = !entry.isIntersecting
+              && !isRevealScrollingDown
+              && entry.boundingClientRect.top >= window.innerHeight * 0.86;
+            if (exitedBelowViewport) entry.target.classList.remove("is-visible");
+          });
+        }, { threshold: 0.14, rootMargin: "0px 0px -10%" });
+
+        revealTargets.forEach((target) => revealObserver.observe(target));
+      } else {
+        revealTargets.forEach((target) => target.classList.add("is-visible"));
+      }
 
       const experience = profile.experience[0];
       setText("profileExperienceSummary", experience.summary);
