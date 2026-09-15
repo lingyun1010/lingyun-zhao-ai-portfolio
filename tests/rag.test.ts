@@ -11,7 +11,7 @@ test('builds deterministic, uniquely identified semantic chunks', () => {
   const first = buildKnowledgeChunks(profile)
   const second = buildKnowledgeChunks(profile)
   assert.deepEqual(first, second)
-  assert.equal(first.length, 18)
+  assert.equal(first.length, 20)
   assert.equal(new Set(first.map((chunk) => chunk.id)).size, first.length)
   assert.deepEqual(new Set(first.map((chunk) => chunk.type)), new Set(['summary', 'skill', 'experience', 'education', 'project', 'service', 'highlight']))
   assert.match(first.find((chunk) => chunk.id === 'experience-embl-ebi-senior-software-engineer')!.content, /Lingyun Zhao worked as/)

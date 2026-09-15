@@ -58,6 +58,8 @@ export interface Project {
   technologies?: string[]
   links?: ProfileLink[]
   tags?: string[]
+  image?: string
+  imageAlt?: string
 }
 
 export interface Profile {
@@ -81,18 +83,22 @@ export interface Profile {
 export const profile = {
   name: 'Lingyun Zhao',
   preferredName: 'Lingyun',
-  headline: 'AI Engineer | Full-stack Software Engineer | Computer Vision',
-  location: 'Sydney, NSW, Australia',
+  headline: 'Applied AI Engineer | Full-stack Software Engineer | Computer Vision PhD',
+  location: 'Ryde, NSW, Australia',
   summary:
-    'I bring 7+ years of production engineering experience together with a PhD in Computer Vision. My current focus is applied GenAI: RAG applications, AI agents, LLM workflows and structured knowledge pipelines that are clear enough to trust and robust enough to ship.',
-  introduction: 'Applied GenAI, RAG systems and computer vision research shaped into useful production software.',
+    'I bring 7+ years of production engineering experience together with a PhD in Computer Vision. I build applied AI products around RAG, tool-using agents, evaluation and structured knowledge pipelines, with clear source grounding, safe fallbacks and human review where it matters.',
+  introduction: 'Applied AI, trustworthy RAG systems and computer vision research shaped into useful production software.',
   contact: {
     email: 'zhaolingyun1010@gmail.com',
+    github: 'https://github.com/lingyun1010',
+    linkedin: 'https://www.linkedin.com/in/lingyun-zhao-syd/',
   },
   focusAreas: [
     'LLM apps',
     'RAG systems',
     'AI agents',
+    'Tool calling',
+    'LLM evaluation',
     'Vector search',
     'Computer vision',
     'React',
@@ -107,7 +113,7 @@ export const profile = {
     {
       id: 'applied-genai',
       title: 'Applied GenAI',
-      description: 'RAG applications, LLM workflows, AI agents, structured outputs and tool-based routing.',
+      description: 'RAG applications, LLM workflows, tool-using agents, structured outputs, evaluation and human-in-the-loop routing.',
     },
     {
       id: 'production-systems',
@@ -124,17 +130,17 @@ export const profile = {
     {
       id: 'ai-systems',
       category: 'AI Systems',
-      items: ['Generative AI', 'LLM applications', 'RAG', 'Embeddings', 'Vector search', 'Tool calling'],
+      items: ['Generative AI', 'RAG', 'AI agents', 'Tool calling', 'Structured outputs', 'Evaluation'],
     },
     {
       id: 'product-engineering',
       category: 'Product Engineering',
-      items: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Java', 'REST APIs'],
+      items: ['Python', 'FastAPI', 'React', 'TypeScript', 'JavaScript', 'REST APIs'],
     },
     {
       id: 'data-platforms',
       category: 'Data Platforms',
-      items: ['PostgreSQL', 'SQL', 'Solr', 'Data pipelines', 'Information retrieval'],
+      items: ['PostgreSQL', 'SQL', 'Solr', 'Airtable', 'Canonical schemas', 'Data pipelines'],
     },
     {
       id: 'vision-and-3d',
@@ -179,7 +185,7 @@ export const profile = {
         'Worked with UX, biology, backend, data-production and infrastructure teams to translate complex requirements into usable products.',
         'Supported system design, documentation, testing, deployment and cross-functional agile delivery.',
       ],
-      technologies: ['React', 'JavaScript', 'REST services'],
+      technologies: ['React', 'JavaScript', 'Java', 'REST services', 'Solr', 'PostgreSQL'],
     },
   ],
   education: [
@@ -204,17 +210,46 @@ export const profile = {
       id: 'tiktok-content-agent',
       title: 'TikTok Content Agent',
       category: 'AI content intelligence',
-      shortDescription: 'An analyst platform combining structured data, LLM analysis, routing and an interactive dashboard.',
-      technologies: ['LLM analysis'],
-      tags: ['Classification', 'Tool routing', 'Human review', 'Traceability'],
+      shortDescription: 'A local-first content intelligence platform that turns CSV or Airtable data into validated metrics, strategy signals, drafts and an analyst chat grounded in one shared data source.',
+      description: 'Includes deterministic analytics, provider-agnostic AI generation, visible tool traces and an offline evaluation harness.',
+      technologies: ['Python', 'FastAPI', 'Airtable', 'LLM analysis', 'OpenAI', 'Claude'],
+      links: [{ label: 'GitHub', url: 'https://github.com/lingyun1010/tiktok-content-agent' }],
+      tags: ['Canonical data', 'Tool routing', 'Evaluation', 'Human review'],
+      image: 'https://raw.githubusercontent.com/lingyun1010/tiktok-content-agent/main/docs/assets/dashboard-01-overview.png',
+      imageAlt: 'TikTok Content Agent overview dashboard showing performance metrics and content signals',
     },
     {
       id: 'ecommerce-rag-support-agent',
       title: 'E-commerce RAG Support Agent',
       category: 'Retrieval augmented generation',
-      shortDescription: 'A customer-support system with intent routing, retrieval, grounded generation, source attribution and escalation logic.',
-      technologies: ['Retrieval augmented generation'],
-      tags: ['Intent routing', 'Source attribution', 'Controlled generation', 'Escalation'],
+      shortDescription: 'A full-stack support assistant that routes requests between grounded RAG, mock commerce APIs and human escalation, with citations and controlled fallbacks.',
+      description: 'A store URL can be transformed into product, policy and FAQ knowledge used by the FastAPI chat service.',
+      technologies: ['Python', 'FastAPI', 'LlamaIndex', 'OpenAI', 'JavaScript'],
+      links: [{ label: 'GitHub', url: 'https://github.com/lingyun1010/ecommerce-rag-agent' }],
+      tags: ['Intent routing', 'Source attribution', 'Tool calling', 'Escalation'],
+    },
+    {
+      id: 'lookatme-avatar',
+      title: 'LookAtMe Avatar',
+      category: 'Interactive web avatar',
+      shortDescription: 'A reusable pointer-following avatar built from selected video frames, creating a lightweight pseudo-3D directional interaction without a rigged 3D model.',
+      technologies: ['React', 'JavaScript', 'Frame extraction', 'Responsive UI'],
+      links: [
+        { label: 'Live demo', url: 'https://lingyun1010.github.io/lookatme-avatar/' },
+        { label: 'GitHub', url: 'https://github.com/lingyun1010/lookatme-avatar' },
+      ],
+      tags: ['Pointer tracking', 'Frame mapping', 'Reusable runtime'],
+      image: 'https://raw.githubusercontent.com/lingyun1010/lookatme-avatar/main/docs/interaction.png',
+      imageAlt: 'LookAtMe Avatar directional pointer interaction demonstration',
+    },
+    {
+      id: 'store2knowledge-skill',
+      title: 'Store2Knowledge Skill',
+      category: 'Structured knowledge pipeline',
+      shortDescription: 'A reusable Codex skill that converts public e-commerce pages into structured product, policy and FAQ knowledge for agent and RAG workflows.',
+      technologies: ['Codex skills', 'Markdown', 'Structured extraction'],
+      links: [{ label: 'GitHub', url: 'https://github.com/lingyun1010/store2knowledge-skill' }],
+      tags: ['Knowledge ingestion', 'Products', 'Policies', 'FAQs'],
     },
     {
       id: 'expression-atlas',
@@ -222,6 +257,7 @@ export const profile = {
       category: 'Scientific data platform',
       shortDescription: 'Production search, exploration and visualisation workflows for a global scientific research platform at EMBL-EBI.',
       technologies: ['React', 'REST services', 'Solr', 'Data visualisation'],
+      links: [{ label: 'Public site', url: 'https://www.ebi.ac.uk/gxa/home' }],
       tags: ['React', 'REST services', 'Solr', 'Data visualisation'],
     },
   ],
