@@ -283,6 +283,12 @@
         animation: answer-reveal 240ms ease-out;
       }
 
+      .avatar-speech[data-state="thinking"] p {
+        min-width: 6ch;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+      }
+
       @keyframes answer-reveal {
         from { opacity: 0; transform: translateY(6px); }
         to { opacity: 1; transform: translateY(0); }
@@ -1793,6 +1799,7 @@
       /** @type {AvatarChatState} */
       let avatarChatState = "idle";
       let currentRelatedIds = [];
+      let thinkingDotsTimer = 0;
 
       renderList("suggestedQuestions", suggestedQuestions, (question) =>
         `<button class="question-chip" type="button" data-question="${question}">
@@ -1929,15 +1936,27 @@
       }
 
       function setAvatarChatState(state, message) {
+        window.clearInterval(thinkingDotsTimer);
+        thinkingDotsTimer = 0;
         avatarChatState = state;
         speechBubble.dataset.state = state;
         speechBubble.setAttribute("aria-busy", state === "thinking" ? "true" : "false");
+        speechBubble.setAttribute("aria-live", state === "thinking" ? "off" : "polite");
         characterStage.dataset.state = state;
         answerText.textContent = message;
         chatInput.disabled = state === "thinking";
         chatSubmit.disabled = state === "thinking";
         chatSubmit.setAttribute("aria-label", state === "thinking" ? "Answering question" : "Send question");
         suggestedQuestionList.dataset.state = state;
+
+        if (state === "thinking") {
+          let dotCount = 3;
+          answerText.textContent = ".".repeat(dotCount);
+          thinkingDotsTimer = window.setInterval(() => {
+            dotCount = dotCount === 6 ? 3 : dotCount + 1;
+            answerText.textContent = ".".repeat(dotCount);
+          }, 360);
+        }
       }
 
       function profileIdForSource(source) {
@@ -1977,7 +1996,7 @@
         chatInput.value = message;
         currentRelatedIds = [];
         sourceList.replaceChildren();
-        setAvatarChatState("thinking", "…");
+        setAvatarChatState("thinking", "...");
 
         try {
           const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");

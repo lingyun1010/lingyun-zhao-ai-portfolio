@@ -3,19 +3,17 @@ import type { KnowledgeChunk } from './types.ts'
 
 const compact = (values: Array<string | undefined>) => values.filter(Boolean).join(' | ')
 
-export function buildKnowledgeChunks(profile: Profile): KnowledgeChunk[] {
+export function buildKnowledgeChunks(profile: Profile, canonicalProfileKnowledge: string): KnowledgeChunk[] {
+  const normalizedProfileKnowledge = canonicalProfileKnowledge.trim()
+  if (!normalizedProfileKnowledge) throw new Error('Canonical profile knowledge is required')
+
   const chunks: KnowledgeChunk[] = [
     {
       id: 'summary-profile',
       type: 'summary',
       title: `${profile.name} — Professional profile`,
-      content: compact([
-        `${profile.name} is ${profile.headline}.`,
-        profile.location ? `${profile.name} is based in ${profile.location}.` : undefined,
-        profile.summary,
-        `Current focus areas: ${profile.focusAreas.join(', ')}.`,
-      ]),
-      metadata: { sourceId: 'profile' },
+      content: normalizedProfileKnowledge,
+      metadata: { sourceId: 'knowledge/profile.md' },
     },
   ]
 

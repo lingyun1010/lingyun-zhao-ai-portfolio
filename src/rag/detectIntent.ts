@@ -1,8 +1,16 @@
 import type { KnowledgeChunkType } from './types.ts'
 
-export type RetrievalIntent = Extract<KnowledgeChunkType, 'project' | 'experience' | 'education' | 'skill'>
+export type RetrievalIntent = Extract<KnowledgeChunkType, 'summary' | 'project' | 'experience' | 'education' | 'skill'>
 
 const INTENT_PATTERNS: Record<RetrievalIntent, RegExp[]> = {
+  summary: [
+    /\b(?:full|preferred)?\s*name\b/i,
+    /\bwho are you\b/i,
+    /\bwhere (?:are you based|do you live)\b/i,
+    /\b(?:tell me about yourself|your background|professional background)\b/i,
+    /\b(?:roles?|jobs?|positions?) (?:are you|you are) (?:interested in|looking for)\b/i,
+    /\b(?:career focus|professional profile)\b/i,
+  ],
   project: [
     /\bprojects?\b/i,
     /\b(?:what|things?)\s+(?:have\s+you\s+)?built\b/i,

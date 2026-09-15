@@ -120,20 +120,22 @@ The page is organized as a single scrollable portfolio:
 
 ## Profile Data Architecture
 
-`src/data/profile.ts` is the canonical structured representation of the portfolio's profile content. It keeps identity, contact details, skills, services, experience, education, projects, screenshots, and external links separate from the presentation layer, with stable IDs for every major record.
+`src/data/profile.ts` is the canonical structured representation of the visible portfolio UI. It keeps contact details, skills, services, experience, education, projects, screenshots, and external links separate from the presentation layer, with stable IDs for every major record.
+
+`knowledge/profile.md` is the canonical RAG source for basic identity and biography questions. Name, preferred name, location, professional background, roles of interest, education, core technical areas, and the current AI-project list are intentionally kept together in one compact `summary-profile` chunk rather than inferred from project documents.
 
 ```text
 Current phase:
 
 Existing CV-derived content
           ↓
-     profile.ts
-      /       \
-     ↓         ↓
-Portfolio UI  RAG pipeline
+profile.ts ─────────────→ Portfolio UI and structured portfolio chunks
+knowledge/profile.md ──→ Compact canonical biography chunk
+                              ↓
+                         RAG pipeline
 ```
 
-Any future CV-import workflow should connect to this structure rather than writing directly into the page:
+Any future CV-import workflow should update these canonical sources rather than writing directly into the page:
 
 ```text
 CV.pdf

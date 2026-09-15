@@ -3,9 +3,10 @@ import { profile } from '../src/data/profile.ts'
 import { buildKnowledgeChunks } from '../src/rag/buildKnowledgeChunks.ts'
 import { RAG_CONFIG } from '../src/rag/config.ts'
 import { embedTexts } from '../src/rag/embeddings.ts'
+import { loadProfileKnowledge } from '../src/rag/loadProfileKnowledge.ts'
 import type { RagIndex } from '../src/rag/types.ts'
 
-const chunks = buildKnowledgeChunks(profile)
+const chunks = buildKnowledgeChunks(profile, await loadProfileKnowledge())
 const embeddings = await embedTexts(chunks.map((chunk) => chunk.content))
 const index: RagIndex = {
   version: 1,

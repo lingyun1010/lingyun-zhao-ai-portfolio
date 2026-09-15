@@ -5,7 +5,8 @@ This file is the fast handoff for AI coding agents working on the portfolio. Rea
 ## Current Architecture
 
 - `index.html` is the active application: markup, responsive CSS, UI rendering, Hero interactions, scroll animation, chat client, avatar direction mapping, and Three.js cursor effect all live here.
-- `src/data/profile.ts` is the canonical source for visible profile, skills, experience, education, projects, project images, and external links.
+- `src/data/profile.ts` is the canonical source for visible UI content, skills, experience, education, projects, project images, and external links.
+- `knowledge/profile.md` is the canonical RAG source for identity and biography questions. Its facts are kept together in the `summary-profile` chunk.
 - `src/rag/` contains framework-independent chunking, intent detection, retrieval, prompting, embeddings, and answer generation.
 - `api/chat.ts` is the Vercel serverless chat endpoint. Never expose the OpenAI key to browser code.
 - `generated/rag-index.json` is committed derived data used by the API. It currently contains 20 chunks.
@@ -30,7 +31,8 @@ This file is the fast handoff for AI coding agents working on the portfolio. Rea
 - Preserve the existing visual theme, avatar artwork, directional interaction, RAG behavior, suggested-question behavior, source chips, and API wiring.
 - Prefer small CSS/JavaScript refinements over structural rewrites.
 - Do not add animation dependencies such as GSAP or Lenis for effects already implemented with native browser APIs.
-- Keep all user-facing profile facts in `src/data/profile.ts`; avoid duplicating copy in `index.html` unless it is section-level UI copy.
+- Keep visible portfolio data in `src/data/profile.ts`; avoid duplicating copy in `index.html` unless it is section-level UI copy.
+- Keep basic identity, biography, career-focus, and roles-of-interest answers grounded in `knowledge/profile.md`. Do not hardcode them in `api/chat.ts` or the prompt.
 - Keep stable profile IDs because RAG `relatedIds` and source-chip navigation depend on matching `data-profile-id` values.
 - Project images must have meaningful `imageAlt` text and links must point to the corresponding repository or public page.
 - Never put `OPENAI_API_KEY` in a `VITE_` variable or client bundle.
@@ -39,12 +41,12 @@ This file is the fast handoff for AI coding agents working on the portfolio. Rea
 
 ## Profile and RAG Update Workflow
 
-When changing facts, skills, experience, education, projects, project links, or project descriptions:
+When changing identity or biography facts, edit `knowledge/profile.md`. When changing visible site content, skills, experience, education, projects, project links, or project descriptions, edit `src/data/profile.ts`. Keep overlapping facts consistent.
 
-1. Edit `src/data/profile.ts`.
+1. Edit the appropriate canonical source or sources.
 2. Update or add retrieval tests when semantic coverage changes.
 3. Run `pnpm rag:build` to regenerate `generated/rag-index.json` (requires `OPENAI_API_KEY` and network access).
-4. Confirm the generated item count matches `buildKnowledgeChunks(profile)` and update intentional fixed-count tests.
+4. Confirm the generated item count matches `buildKnowledgeChunks(profile, canonicalProfileKnowledge)` and update intentional fixed-count tests.
 5. Run the full validation commands below.
 
 Changing only presentation CSS/JavaScript does not require rebuilding the RAG index.

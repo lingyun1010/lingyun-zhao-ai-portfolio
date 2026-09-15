@@ -2,6 +2,13 @@ import { answerPortfolioQuestion } from '../src/rag/answerQuestion.ts'
 import { retrieve } from '../src/rag/retrieve.ts'
 
 const questions = [
+  'What is your name?',
+  "What's your full name?",
+  'Where are you based?',
+  'Where do you live?',
+  'Tell me about yourself.',
+  "What's your background?",
+  'What roles are you interested in?',
   'What AI projects have you built?',
   'What experience do you have with RAG?',
   'Tell me about your computer vision background.',
