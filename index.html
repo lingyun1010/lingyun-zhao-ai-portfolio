@@ -679,8 +679,7 @@
         line-height: 1.65;
       }
 
-      .motion-ready .about-copy h2,
-      .motion-ready .about-copy p {
+      .motion-ready .about-copy h2 {
         --highlight-progress: -24%;
         color: transparent;
         background: linear-gradient(
@@ -697,14 +696,19 @@
         transition: --highlight-progress 0.9s cubic-bezier(0.22, 1, 0.36, 1);
       }
 
-      .motion-ready .about-copy p {
-        transition-duration: 1.15s;
-        transition-delay: 950ms;
+      .motion-ready .about-letter {
+        color: rgba(215, 226, 234, 0.22);
+        transition: color 0.24s ease-out;
+        transition-delay: 0ms;
       }
 
-      .motion-ready .about-copy.is-visible h2,
-      .motion-ready .about-copy.is-visible p {
+      .motion-ready .about-copy.is-visible h2 {
         --highlight-progress: 100%;
+      }
+
+      .motion-ready .about-copy.is-visible .about-letter {
+        color: rgba(238, 247, 252, 0.96);
+        transition-delay: var(--letter-delay);
       }
 
       .section-light .section-head p {
@@ -1343,9 +1347,13 @@
           transition: none;
         }
 
-        .motion-ready .about-copy h2,
-        .motion-ready .about-copy p {
+        .motion-ready .about-copy h2 {
           --highlight-progress: 100%;
+          transition: none;
+        }
+
+        .motion-ready .about-letter {
+          color: rgba(238, 247, 252, 0.96);
           transition: none;
         }
       }
@@ -1731,6 +1739,28 @@
       window.addEventListener("resize", requestProjectStackUpdate, { passive: true });
       projectMotionQuery.addEventListener("change", requestProjectStackUpdate);
       updateProjectStack();
+
+      const aboutSummary = document.querySelector("#profileSummary");
+      if (aboutSummary) {
+        const summaryText = aboutSummary.textContent;
+        const letterSequence = document.createElement("span");
+        letterSequence.setAttribute("aria-hidden", "true");
+        let letterIndex = 0;
+        Array.from(summaryText).forEach((character) => {
+          if (/\s/.test(character)) {
+            letterSequence.append(character);
+            return;
+          }
+          const letter = document.createElement("span");
+          letter.className = "about-letter";
+          letter.textContent = character;
+          letter.style.setProperty("--letter-delay", `${950 + letterIndex * 16}ms`);
+          letterSequence.append(letter);
+          letterIndex += 1;
+        });
+        aboutSummary.setAttribute("aria-label", summaryText);
+        aboutSummary.replaceChildren(letterSequence);
+      }
 
       const revealTargets = document.querySelectorAll(".reveal-on-scroll, .about-copy");
       document.documentElement.classList.add("motion-ready");
