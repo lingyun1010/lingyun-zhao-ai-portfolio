@@ -693,7 +693,7 @@
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        transition: --highlight-progress 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: --highlight-progress 1.5s cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       .motion-ready .about-letter {
@@ -1754,7 +1754,7 @@
           const letter = document.createElement("span");
           letter.className = "about-letter";
           letter.textContent = character;
-          letter.style.setProperty("--letter-delay", `${950 + letterIndex * 16}ms`);
+          letter.style.setProperty("--letter-delay", `${150 + letterIndex * 8}ms`);
           letterSequence.append(letter);
           letterIndex += 1;
         });
