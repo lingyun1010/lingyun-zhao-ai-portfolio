@@ -150,6 +150,33 @@
         text-transform: uppercase;
       }
 
+      .particle-heading {
+        position: relative;
+        height: clamp(105px, 13vw, 180px);
+        overflow: hidden;
+        background: none;
+        -webkit-text-fill-color: initial;
+      }
+
+      .particle-heading canvas {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+
+      .particle-heading-text {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+      }
+
       .character-stage {
         position: absolute;
         left: 50%;
@@ -329,18 +356,83 @@
       }
 
       .suggested-questions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-top: 9px;
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        transition: opacity 180ms ease;
       }
 
       .question-chip {
-        padding: 6px 10px;
+        --float-x: 0px;
+        --float-y: 6px;
+        --float-time: 5.6s;
+        --float-delay: 0s;
+        position: absolute;
+        padding: 9px 14px;
         border-radius: 999px;
-        font-size: 0.74rem;
-        line-height: 1.25;
+        color: rgba(255, 255, 255, 0.82);
+        background: rgba(22, 16, 27, 0.64);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 0 18px rgba(180, 126, 207, 0.08);
+        backdrop-filter: blur(12px);
+        font-size: 0.82rem;
+        line-height: 1.3;
         cursor: pointer;
+        pointer-events: auto;
+        animation: question-float var(--float-time) ease-in-out var(--float-delay) infinite alternate;
+        transition: border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+      }
+
+      .question-chip:nth-child(1) { top: 37%; left: 4%; --float-time: 5.2s; }
+      .question-chip:nth-child(2) { top: 51%; left: 9%; --float-x: 3px; --float-y: 5px; --float-time: 6.1s; --float-delay: -1.4s; }
+      .question-chip:nth-child(3) { top: 65%; left: 19%; --float-x: -2px; --float-y: 7px; --float-time: 5.7s; --float-delay: -2.2s; }
+      .question-chip:nth-child(4) { top: 65%; right: 4%; --float-x: -3px; --float-y: 5px; --float-time: 6.4s; --float-delay: -0.8s; }
+      .question-chip:nth-child(5) { top: 72%; right: 8%; --float-x: 2px; --float-y: 7px; --float-time: 5.4s; --float-delay: -1.8s; }
+
+      .suggested-questions[data-state="thinking"] {
+        opacity: 0.5;
+      }
+
+      @keyframes question-float {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(var(--float-x), calc(var(--float-y) * -1), 0); }
+      }
+
+      .question-particle,
+      .question-particle-point {
+        position: absolute;
+        top: calc(50% - 5px);
+        left: calc(50% - 5px);
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .question-particle {
+        z-index: 1;
+        animation: question-particle var(--particle-time) ease 1;
+      }
+
+      .question-particle-point {
+        top: 0;
+        left: 0;
+        background: var(--particle-color);
+        animation: question-particle-point var(--particle-time) ease 1;
+      }
+
+      @keyframes question-particle {
+        0% { transform: rotate(0deg) translate(var(--start-x), var(--start-y)); }
+        70% { transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2)); }
+        100% { transform: rotate(var(--rotate)) translate(calc(var(--end-x) * 0.5), calc(var(--end-y) * 0.5)); }
+      }
+
+      @keyframes question-particle-point {
+        0% { transform: scale(0); opacity: 0; }
+        38% { opacity: 0.9; }
+        65% { transform: scale(var(--particle-scale)); opacity: 0.9; }
+        100% { transform: scale(0); opacity: 0; }
       }
 
       .question-chip:hover,
@@ -349,6 +441,17 @@
       button.source-chip:focus-visible {
         border-color: rgba(255, 255, 255, 0.58);
         color: #ffffff;
+      }
+
+      .question-chip:hover {
+        scale: 1.045;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28), 0 0 22px rgba(201, 142, 218, 0.16);
+        animation-play-state: paused;
+      }
+
+      .question-chip:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.88);
+        outline-offset: 3px;
       }
 
       .profile-highlight {
@@ -925,6 +1028,10 @@
           line-height: 0.86;
         }
 
+        .particle-heading {
+          height: clamp(118px, 31vw, 160px);
+        }
+
         .character-stage {
           position: relative;
           left: auto;
@@ -983,6 +1090,24 @@
           border-left-width: 11px;
         }
 
+        .suggested-questions {
+          position: relative;
+          inset: auto;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 9px;
+          width: min(620px, calc(100% - 32px));
+          margin: 18px auto 0;
+        }
+
+        .question-chip,
+        .question-chip:nth-child(n) {
+          position: relative;
+          inset: auto;
+          min-height: 42px;
+        }
+
         .content-band,
         .skills-grid,
         .project-grid,
@@ -1027,6 +1152,23 @@
           margin-top: -8px;
         }
 
+        .suggested-questions {
+          justify-content: flex-start;
+          width: calc(100% - 28px);
+          margin-top: 16px;
+        }
+
+        .question-chip {
+          max-width: 100%;
+          padding: 9px 12px;
+          font-size: 0.78rem;
+        }
+
+        .question-chip:nth-child(n + 4) {
+          animation: none;
+          opacity: 0.76;
+        }
+
         .avatar-speech {
           min-height: 64px;
           padding: 15px 16px;
@@ -1038,6 +1180,19 @@
         .avatar-speech[data-state="answered"],
         .profile-highlight {
           animation: none;
+        }
+
+        .question-chip {
+          animation: none;
+          transition: border-color 180ms ease, opacity 180ms ease;
+        }
+
+        .question-chip:hover {
+          scale: 1;
+        }
+
+        .question-particle {
+          display: none;
         }
       }
     </style>
@@ -1056,7 +1211,10 @@
 
         <div class="hero-title">
           <p class="hero-kicker" id="profileHeadline"></p>
-          <h1 class="hero-heading" id="profileGreeting"></h1>
+          <h1 class="hero-heading particle-heading" id="profileGreeting">
+            <canvas id="profileGreetingCanvas" aria-hidden="true"></canvas>
+            <span class="particle-heading-text" id="profileGreetingText"></span>
+          </h1>
         </div>
 
         <div class="character-stage" aria-label="Animated character portrait controlled by pointer direction">
@@ -1078,8 +1236,9 @@
             <input id="avatarQuestion" name="message" type="text" maxlength="500" autocomplete="off" placeholder="Ask me anything..." aria-label="Ask Lingyun a question" />
             <button type="submit" id="avatarSubmit" aria-label="Send question">→</button>
           </form>
-          <div class="suggested-questions" id="suggestedQuestions" aria-label="Suggested questions"></div>
         </div>
+
+        <div class="suggested-questions" id="suggestedQuestions" aria-label="Suggested questions"></div>
 
         <div class="hero-bottom">
           <p id="profileIntroduction"></p>
@@ -1162,7 +1321,8 @@
       document.title = `${profile.name} - ${profile.headline.split(" | ")[0]}`;
       document.querySelector('meta[name="description"]')?.setAttribute("content", `${profile.name} - ${profile.headline}.`);
       setText("profileHeadline", profile.headline);
-      setText("profileGreeting", `Hi, I am ${profile.preferredName}`);
+      const greeting = `Hi, I am ${profile.preferredName}`;
+      setText("profileGreetingText", greeting);
       setText("profileIntroduction", profile.introduction);
       setText("profileSummary", profile.summary);
       setText("profileLocation", profile.location);
@@ -1175,6 +1335,169 @@
         const element = document.querySelector(`#${id}`);
         if (element) element.innerHTML = items.map(renderItem).join("");
       };
+
+      function initParticleHeading(container, canvas, text) {
+        const context = canvas.getContext("2d");
+        if (!context) return;
+
+        const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let reducedMotion = reducedMotionQuery.matches;
+        let particles = [];
+        let frame;
+        let resizeFrame;
+        let buildId = 0;
+        let width = 0;
+        let height = 0;
+        let gatherStart = 0;
+        let gathering = false;
+        const pointer = { active: false, x: 0, y: 0, smoothX: 0, smoothY: 0 };
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
+
+        function gather(scatter = true) {
+          const now = performance.now();
+          particles.forEach((particle) => {
+            if (scatter && !reducedMotion) {
+              const angle = particle.seed * Math.PI * 2;
+              const distance = 140 * (0.4 + particle.depth * 0.7);
+              particle.x = particle.targetX + Math.cos(angle) * distance;
+              particle.y = particle.targetY + Math.sin(angle) * distance;
+            }
+            particle.startX = particle.x;
+            particle.startY = particle.y;
+            particle.delay = reducedMotion ? 0 : particle.seed * 320;
+          });
+          gatherStart = now;
+          gathering = !reducedMotion;
+        }
+
+        function render(now) {
+          context.clearRect(0, 0, width, height);
+          context.shadowBlur = reducedMotion ? 0 : 4;
+          context.shadowColor = "#c691d5";
+          pointer.smoothX += (pointer.x - pointer.smoothX) * 0.18;
+          pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
+          let complete = true;
+
+          particles.forEach((particle) => {
+            let x = particle.targetX;
+            let y = particle.targetY;
+
+            if (gathering) {
+              const progress = clamp((now - gatherStart - particle.delay) / 1450, 0, 1);
+              const eased = easeOutCubic(progress);
+              x = particle.startX + (particle.targetX - particle.startX) * eased;
+              y = particle.startY + (particle.targetY - particle.startY) * eased;
+              if (progress < 1) complete = false;
+            } else if (!reducedMotion) {
+              x += Math.sin(now * 0.0008 + particle.seed * 10) * 0.45 * particle.depth;
+              y += Math.cos(now * 0.0007 + particle.depth * 10) * 0.45 * particle.depth;
+            }
+
+            if (pointer.active && !reducedMotion) {
+              const dx = x - pointer.smoothX;
+              const dy = y - pointer.smoothY;
+              const distance = Math.hypot(dx, dy);
+              if (distance > 0 && distance < 110) {
+                const force = Math.pow(1 - distance / 110, 2) * 30;
+                x += (dx / distance) * force;
+                y += (dy / distance) * force;
+              }
+            }
+
+            const follow = reducedMotion ? 1 : 0.22;
+            particle.x += (x - particle.x) * follow;
+            particle.y += (y - particle.y) * follow;
+            context.fillStyle = particle.color;
+            context.fillRect(particle.x - particle.size / 2, particle.y - particle.size / 2, particle.size, particle.size);
+          });
+
+          if (gathering && complete) gathering = false;
+          frame = requestAnimationFrame(render);
+        }
+
+        async function sampleText() {
+          const currentBuild = ++buildId;
+          await document.fonts?.ready;
+          if (currentBuild !== buildId) return;
+
+          const rect = container.getBoundingClientRect();
+          width = Math.floor(rect.width);
+          height = Math.floor(rect.height);
+          if (!width || !height) return;
+
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const computed = getComputedStyle(container);
+          const offscreen = document.createElement("canvas");
+          offscreen.width = width;
+          offscreen.height = height;
+          const offscreenContext = offscreen.getContext("2d", { willReadFrequently: true });
+          const lines = width <= 700 ? ["HI, I AM", profile.preferredName.toUpperCase()] : [text.toUpperCase()];
+          let fontSize = parseFloat(computed.fontSize);
+          const lineHeight = lines.length > 1 ? fontSize * 0.78 : fontSize;
+          offscreenContext.font = `${computed.fontWeight} ${fontSize}px ${computed.fontFamily}`;
+          const widest = Math.max(...lines.map((line) => offscreenContext.measureText(line).width));
+          fontSize *= Math.min(1, width * 0.94 / widest, height * 0.88 / (lineHeight * lines.length));
+          const resolvedLineHeight = fontSize * (lines.length > 1 ? 0.78 : 1);
+          offscreenContext.font = `${computed.fontWeight} ${fontSize}px ${computed.fontFamily}`;
+          offscreenContext.textAlign = "center";
+          offscreenContext.textBaseline = "middle";
+          offscreenContext.fillStyle = "#fff";
+          lines.forEach((line, index) => {
+            const y = height / 2 + (index - (lines.length - 1) / 2) * resolvedLineHeight;
+            offscreenContext.fillText(line, width / 2, y);
+          });
+
+          const data = offscreenContext.getImageData(0, 0, width, height).data;
+          const step = width <= 700 ? 4 : 5;
+          const targets = [];
+          for (let y = 0; y < height; y += step) {
+            for (let x = 0; x < width; x += step) {
+              if (data[(y * width + x) * 4 + 3] > 40) targets.push({ x, y });
+            }
+          }
+          const stride = Math.max(1, Math.ceil(targets.length / 4200));
+          particles = targets.filter((_, index) => index % stride === 0).map((target, index) => {
+            const seed = ((index * 9301 + 49297) % 233280) / 233280;
+            const depth = 0.45 + (((index * 233 + 97) % 1000) / 1000) * 0.9;
+            const mix = clamp(target.x / width + (seed - 0.5) * 0.28, 0, 1);
+            const color = `rgb(${Math.round(187 + (198 - 187) * mix)}, ${Math.round(204 + (145 - 204) * mix)}, ${Math.round(215 + (213 - 215) * mix)})`;
+            return { ...target, targetX: target.x, targetY: target.y, startX: target.x, startY: target.y, size: 1.5 + depth * 0.35, color, seed, depth, delay: 0 };
+          });
+          pointer.x = pointer.smoothX = width / 2;
+          pointer.y = pointer.smoothY = height / 2;
+          gather(true);
+          if (!frame) frame = requestAnimationFrame(render);
+        }
+
+        const movePointer = (event) => {
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = event.clientX - rect.left;
+          pointer.y = event.clientY - rect.top;
+          pointer.active = true;
+        };
+        const queueSample = () => {
+          cancelAnimationFrame(resizeFrame);
+          resizeFrame = requestAnimationFrame(sampleText);
+        };
+        const resizeObserver = new ResizeObserver(queueSample);
+        resizeObserver.observe(container);
+        canvas.addEventListener("pointerenter", movePointer);
+        canvas.addEventListener("pointermove", movePointer);
+        canvas.addEventListener("pointerleave", () => { pointer.active = false; });
+        reducedMotionQuery.addEventListener("change", (event) => { reducedMotion = event.matches; sampleText(); });
+        sampleText();
+      }
+
+      initParticleHeading(
+        document.querySelector("#profileGreeting"),
+        document.querySelector("#profileGreetingCanvas"),
+        greeting,
+      );
 
       renderList("work", profile.highlights, (item) => `
         <article${item.id === "production-systems" ? ' id="systems"' : ""} data-profile-id="${item.id}">
@@ -1217,7 +1540,9 @@
       const suggestedQuestions = [
         "What AI projects have you built?",
         "What experience do you have with RAG?",
-        "Tell me about your computer vision background.",
+        "Tell me about your PhD",
+        "What did you build at EMBL-EBI?",
+        "What technologies do you use?",
       ];
 
       const chatForm = document.querySelector("#avatarChatForm");
@@ -1227,6 +1552,7 @@
       const answerText = document.querySelector("#avatarAnswer");
       const sourceList = document.querySelector("#avatarSources");
       const characterStage = document.querySelector(".character-stage");
+      const suggestedQuestionList = document.querySelector("#suggestedQuestions");
       /** @typedef {"idle" | "thinking" | "answered" | "error"} AvatarChatState */
       /** @type {AvatarChatState} */
       let avatarChatState = "idle";
@@ -1235,6 +1561,48 @@
       renderList("suggestedQuestions", suggestedQuestions, (question) =>
         `<button class="question-chip" type="button" data-question="${question}">${question}</button>`
       );
+
+      const particleSettings = {
+        count: 12,
+        distances: [72, 11],
+        radius: 130,
+        animationTime: 520,
+        timeVariance: 280,
+        colors: ["#d99acb", "#b497cf", "#8f78ad", "#e7dce4"],
+      };
+
+      const particleNoise = (amount = 1) => amount / 2 - Math.random() * amount;
+      const getParticleXY = (distance, index, total) => {
+        const angle = ((360 + particleNoise(8)) / total) * index * (Math.PI / 180);
+        return [distance * Math.cos(angle), distance * Math.sin(angle)];
+      };
+
+      function makeQuestionParticles(button) {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        for (let index = 0; index < particleSettings.count; index += 1) {
+          const time = particleSettings.animationTime + particleNoise(particleSettings.timeVariance);
+          const start = getParticleXY(particleSettings.distances[0], particleSettings.count - index, particleSettings.count);
+          const end = getParticleXY(particleSettings.distances[1] + particleNoise(7), particleSettings.count - index, particleSettings.count);
+          const rotateNoise = particleNoise(particleSettings.radius / 10);
+          const particle = document.createElement("span");
+          const point = document.createElement("span");
+
+          particle.className = "question-particle";
+          point.className = "question-particle-point";
+          particle.style.setProperty("--start-x", `${start[0]}px`);
+          particle.style.setProperty("--start-y", `${start[1]}px`);
+          particle.style.setProperty("--end-x", `${end[0]}px`);
+          particle.style.setProperty("--end-y", `${end[1]}px`);
+          particle.style.setProperty("--particle-time", `${time}ms`);
+          particle.style.setProperty("--particle-scale", `${1 + particleNoise(0.2)}`);
+          particle.style.setProperty("--particle-color", particleSettings.colors[index % particleSettings.colors.length]);
+          particle.style.setProperty("--rotate", `${(rotateNoise > 0 ? rotateNoise + particleSettings.radius / 20 : rotateNoise - particleSettings.radius / 20) * 10}deg`);
+          particle.appendChild(point);
+          button.appendChild(particle);
+          window.setTimeout(() => particle.remove(), time);
+        }
+      }
 
       function setAvatarChatState(state, message) {
         avatarChatState = state;
@@ -1245,6 +1613,7 @@
         chatInput.disabled = state === "thinking";
         chatSubmit.disabled = state === "thinking";
         chatSubmit.setAttribute("aria-label", state === "thinking" ? "Answering question" : "Send question");
+        suggestedQuestionList.dataset.state = state;
       }
 
       function profileIdForSource(source) {
@@ -1316,7 +1685,10 @@
 
       document.querySelector("#suggestedQuestions").addEventListener("click", (event) => {
         const button = event.target.closest("[data-question]");
-        if (button) askAvatar(button.dataset.question);
+        if (button && avatarChatState !== "thinking") {
+          makeQuestionParticles(button);
+          askAvatar(button.dataset.question);
+        }
       });
 
       function initGhostCursor(host) {
