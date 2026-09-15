@@ -11,10 +11,28 @@ This portfolio is built as a Vite-powered static site. The main experience lives
 The page includes:
 
 - A full-screen hero with a video-derived cartoon character portrait.
+- A particle-built `HI, I AM LINGYUN` heading with subtle pointer disturbance.
 - Mouse-direction-based character angle switching.
+- A speech-bubble RAG chat with suggested questions and source navigation.
 - A GhostCursor-style WebGL pointer trail.
 - Edge-reactive glowing cards for skill and project sections.
+- Scroll-triggered highlight/card reveals and a single-column project ScrollStack.
 - Responsive portfolio sections for highlights, skills, services, projects, experience, education, and contact.
+
+## Current Stage
+
+The frontend/backend integration is complete and the portfolio is in UI-refinement and content-maintenance stage. The current working experience includes:
+
+- Responsive Hero layout with readable typography, visible avatar, speech bubble, input, and wrapping suggested-question chips.
+- Particle heading assembly on page initialization, followed by a subtle ambient particle state and pointer interaction.
+- Five suggested questions with electric borders and click particles.
+- Softer WebGL cursor glow settings that do not dominate the Hero.
+- Three post-Hero highlight cards and four About skill cards that animate when scrolling down into view. They reset after the user scrolls upward past them, so a later downward pass replays the entrance.
+- About heading highlight first, followed by a separate top-to-bottom paragraph highlight with a feathered gradient boundary.
+- Five project cards in a one-column sticky ScrollStack. Project screenshots, repository links, and public-page links come from `src/data/profile.ts`.
+- A generated 20-chunk RAG index that reflects the current structured profile and projects.
+
+Do not redesign the site or replace the current single-page implementation unless the scope explicitly calls for it. Current work should normally be incremental UI refinement, content updates, accessibility, responsive fixes, or RAG quality improvements.
 
 ## Design Direction
 
@@ -76,7 +94,17 @@ The effect reacts to pointer proximity:
 Applied sections:
 
 - Four skill cards in the About section.
-- Three project cards in the Projects section.
+- Five project cards in the Projects section.
+
+## Scroll and Entrance Animations
+
+React Bits references are adapted to the current plain HTML/CSS/JavaScript architecture without adding GSAP, Lenis, or component-library dependencies.
+
+- Projects use native sticky positioning plus a small scroll handler to create a single-column stacked-card effect.
+- Highlight and skill cards use `IntersectionObserver` for staggered upward fade/scale entrances.
+- These entrance animations trigger only while scrolling downward. Scrolling upward beyond a section resets it for the next downward pass.
+- About copy uses an animatable CSS custom property to move a feathered highlight from top to bottom. The paragraph starts only after the heading finishes.
+- `prefers-reduced-motion: reduce` disables non-essential entrance/scaling motion and reveals content immediately.
 
 ## Content Structure
 
@@ -86,13 +114,13 @@ The page is organized as a single scrollable portfolio:
 - **Highlights**: quick overview of applied GenAI, production systems, and vision/3D work.
 - **About**: concise profile summary and technical skill groups.
 - **Services**: applied GenAI, full-stack delivery, knowledge systems, and computer vision.
-- **Projects**: selected AI, RAG, and scientific data platform work.
+- **Projects**: five selected AI, RAG, interactive-avatar, knowledge-pipeline, and scientific-platform projects in a sticky single-column stack.
 - **Experience**: production software engineering background.
 - **Education and contact panel**: academic background and site-level contact area.
 
 ## Profile Data Architecture
 
-`src/data/profile.ts` is the canonical structured representation of the portfolio's CV-derived content. It keeps identity, contact details, skills, services, experience, education, and projects separate from the React presentation layer, with stable IDs for every major record.
+`src/data/profile.ts` is the canonical structured representation of the portfolio's profile content. It keeps identity, contact details, skills, services, experience, education, projects, screenshots, and external links separate from the presentation layer, with stable IDs for every major record.
 
 ```text
 Current phase:
@@ -102,10 +130,10 @@ Existing CV-derived content
      profile.ts
       /       \
      ↓         ↓
-Portfolio UI  Future RAG pipeline
+Portfolio UI  RAG pipeline
 ```
 
-The next planned phase will connect the source CV to this structure:
+Any future CV-import workflow should connect to this structure rather than writing directly into the page:
 
 ```text
 CV.pdf
@@ -159,7 +187,7 @@ Build and commit the generated index whenever canonical profile content or the e
 pnpm rag:build
 ```
 
-`generated/rag-index.json` is intended to be version-controlled because it is immutable derived portfolio data required by the serverless function. It contains profile text and numeric embeddings, but no API key. It has not been generated until `rag:build` completes successfully.
+`generated/rag-index.json` is version-controlled because it is immutable derived portfolio data required by the serverless function. It contains profile text and numeric embeddings, but no API key. The current index contains 20 chunks. Rebuild it whenever `src/data/profile.ts`, chunk construction, or the embedding model changes.
 
 To inspect retrieval and a final answer locally:
 
@@ -178,7 +206,7 @@ It returns an `answer`, traceable `sources`, stable `relatedIds`, and a `confide
 
 ## Hero Avatar Chat
 
-The Hero contains a lightweight single-turn question form connected to `POST /api/chat`. It supports idle, thinking, answered, and error states; each new question replaces the previous answer. Three suggested questions use the same submission path as typed input.
+The Hero contains a lightweight single-turn question form connected to `POST /api/chat`. It supports idle, thinking, answered, and error states; each new question replaces the previous answer. Five suggested questions use the same submission path as typed input.
 
 Answers appear in a speech bubble anchored beside the existing directional avatar. Up to three traceable source chips are displayed. A chip becomes navigable only when its source resolves to a returned `relatedId` and a real `data-profile-id` in the rendered portfolio; selecting it scrolls to and briefly highlights that item. The avatar's existing pointer-follow behavior is unchanged.
 
@@ -223,7 +251,13 @@ pnpm run dev
 Open:
 
 ```text
-http://localhost:3000/
+http://localhost:5173/
+```
+
+Run the local API in a second terminal when testing chat end to end:
+
+```bash
+pnpm run dev:api
 ```
 
 Build for production:
@@ -236,6 +270,14 @@ Preview the production build:
 
 ```bash
 pnpm run preview
+```
+
+Before handing off a change, run:
+
+```bash
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
 ## GitHub Pages Deployment
